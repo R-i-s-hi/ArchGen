@@ -1,6 +1,6 @@
 import generateArchitecture from "../services/aiService.js";
 import buildPrompt from "../utils/promptTemplate.js";
-import Project from "../models/model.js";
+import Project from "../models/Project.model.js";
 
 
 function extractJSON(text) {

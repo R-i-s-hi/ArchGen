@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import "./architectureCard.css"
 
 // Recursive renderer for nested objects/arrays
 const RenderFields = ({ fields }) => {
@@ -53,7 +54,6 @@ const RenderFields = ({ fields }) => {
 
 
 export function ArchitectureCard({ data }) {
-  console.log(data);
   if (!data || typeof data !== "object") {
     return <p>Invalid data</p>;
   }
@@ -129,11 +129,8 @@ export function ArchitectureCard({ data }) {
             API Routes
           </h3>
           <Card>
-            {/* <CardHeader>
-            <CardTitle>API Routes</CardTitle>
-          </CardHeader> */}
             <CardContent>
-              <Table>
+              <Table className="overflow-x-auto scroller">
                 <TableCaption className="text-[12px]">These are main API routes which will create the app. You can create your custom Routes</TableCaption>
                 <TableHeader>
                   <TableRow>
@@ -162,27 +159,17 @@ export function ArchitectureCard({ data }) {
             Folder Structure
           </h3>
           <Card>
-            {/* <CardHeader>
-            <CardTitle>Folder Structure</CardTitle>
-          </CardHeader> */}
-            <CardContent>
-
-              <ul className="font-mono text-sm space-y-1">
-                {data?.folder_structure?.map?.((f, i) => (
-                  <li key={i}>{f}</li>
-                ))}
-              </ul>
-
-              {data.folder_structure.frontend && (<p>Frontend: </p>)}
-              <ul className="font-mono text-sm space-y-1">
+            <CardContent className="overflow-x-auto scroller">
+              {data.folder_structure.frontend && (<p className="font-bold text-[18px]">Frontend: </p>)}
+              <ul className="font-mono text-sm space-y-1 pl-px">
                 {data?.folder_structure?.frontend?.map?.((f, i) => (
                   <li key={i}>{f}</li>
                 ))}
 
               </ul>
-
-              {data.folder_structure.frontend && (<p>Backend: </p>)}
-              <ul className="font-mono text-sm space-y-1">
+              <br />
+              {data.folder_structure.frontend && (<p className="font-bold text-[18px]">Backend: </p>)}
+              <ul className="font-mono text-sm space-y-1 pl-px">
                 {data?.folder_structure?.backend?.map?.((f, i) => (
                   <li key={i}>{f}</li>
                 ))}
@@ -217,21 +204,25 @@ export function ArchitectureCard({ data }) {
             Feature Roadmap
           </h3>
           <Card>
-            {/* <CardHeader>
-            <CardTitle>Feature Roadmap</CardTitle>
-          </CardHeader> */}
             <CardContent>
-              {(data?.feature_roadmap || {}).map((f, i) => (
-                <div key={i} className="mb-2">
-                  <Badge>{f.name}</Badge>
-                  <p className="text-sm text-muted-foreground ml-[7px] font-semibold">{f.description}</p>
-                </div>
-              ))}
+              <ul className="timeline">
+                {(data?.feature_roadmap || []).map((f, i) => (
+                  <li key={i}>
+                    <div className="node" />
+                    <div className="content">
+                      <Badge className="px-3 py-[3px] font-medium mb-1 rounded-tl-none">{f.name}</Badge>
+                      <p className="text-sm text-muted-foreground ml-1 font-medium leading-tight">
+                        {f.description}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </CardContent>
           </Card>
         </div>
 
-      </div>
+      </div >
     </>
   )
 }

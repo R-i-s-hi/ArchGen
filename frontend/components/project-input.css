@@ -1,0 +1,17 @@
+#project-input::-webkit-scrollbar {
+    width: 8px;
+}
+
+#project-input::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+#project-input::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#project-input::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

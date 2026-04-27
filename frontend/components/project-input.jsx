@@ -4,6 +4,7 @@ import { Sparkles, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
+import "./project-input.css"
 
 export function ProjectInput({
   value,
@@ -20,10 +21,11 @@ export function ProjectInput({
               Describe your project idea
             </label>
             <Textarea
+              id="project-input"
               placeholder="e.g., A real-time collaborative whiteboard app with AI-powered shape recognition, supporting multiple users and export to various formats..."
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              className="focus:outline-none focus:ring-0 focus-visible:ring-0 mt-2 min-h-[120px] resize-none bg-background/50 text-sm placeholder:text-muted-foreground/60"
+              className="focus:outline-none focus:ring-0 focus-visible:ring-0 mt-2 min-h-[120px] max-h-[200px] resize-none bg-background/50 text-sm placeholder:text-muted-foreground/60 overflow-y-auto"
             />
           </div>
 
@@ -34,7 +36,7 @@ export function ProjectInput({
             <Button
               onClick={onGenerate}
               disabled={!value.trim() || isGenerating}
-              className="min-w-[140px] gap-2"
+              className="min-w-[140px] gap-2 cursor-pointer"
             >
               {isGenerating ? (
                 <>

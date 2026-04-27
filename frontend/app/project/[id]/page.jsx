@@ -9,31 +9,86 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Layers, BrainCircuit, Download, Share2, ArrowLeft, Calendar, CheckCircle2, Clock, FileEdit } from "lucide-react"
-
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Copy } from "lucide-react"
 
 export default function ProjectPage({ params }) {
     const { id } = use(params)
     const router = useRouter()
     const [project, setProject] = useState(null)
+    const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        const fetchProject = async () => {
-            try {
-                const res = await fetch(`http://localhost:5000/project/${id}`);
-                const result = await res.json();
-                setProject(result.data);
-                console.log(result);
-            } catch (err) {
-                console.log(err);
-            }
+    const fetchProject = async () => {
+        try {
+            const res = await fetch(`http://localhost:5000/project/${id}`);
+            const result = await res.json();
+            setProject(result.data);
+            console.log(project);
+        } catch (err) {
+            console.log(err);
         }
+    }
+    useEffect(() => {
         fetchProject();
     }, [id])
+
+    const handleExport = async () => {
+        if (!project) return;
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/export-pdf", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ architecture: project }),
+            });
+
+            if (!res.ok) throw new Error("Export failed");
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `chat-${Date.now()}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to export PDF. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleShare = async (chatId) => {
+        try {
+            const res = await fetch(`http://localhost:5000/chat/share/${chatId}`, { method: "POST" });
+
+            const currentUrl = window.location.href;
+            navigator.clipboard.writeText(currentUrl)
+                .then(() => {
+                    alert("Link copied to clipboard!");
+                })
+                .catch(err => {
+                    console.error("Failed to copy: ", err);
+                });
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     if (!project) {
         return (
             <SidebarProvider>
-                <AppSidebar />
+                <AppSidebar selectedProjectId={null} />
                 <SidebarInset>
                     <div className="flex h-full items-center justify-center">
                         <div className="text-center space-y-4">
@@ -51,7 +106,7 @@ export default function ProjectPage({ params }) {
 
     return (
         <SidebarProvider>
-            <AppSidebar />
+            <AppSidebar selectedProjectId={project._id} />
             <SidebarInset>
                 <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b border-border/40 bg-background/80 px-4 backdrop-blur-sm">
                     <SidebarTrigger className="-ml-1 cursor-pointer" />
@@ -62,20 +117,48 @@ export default function ProjectPage({ params }) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
-                            <Share2 className="size-3.5" />
-                            <p className="hidden md:flex">Share</p>
-                        </Button>
-                        <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
-                            <Download className="size-3.5" />
-                            <p className="hidden md:flex">Export</p>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
+                                    <Share2 className="size-3.5" />
+                                    <p className="hidden md:flex">Share</p>
+                                </Button>
+
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Share your chat link</DialogTitle>
+                                    <DialogDescription>
+                                        copy link
+                                        <span className="flex items-center gap-1.5 mt-1">
+                                            <Input placeholder="euigwefgafbauisdfviufhguioefgefjbh" className="focus:outline-none focus:ring-0 border-[#8b90959d]" disabled />
+                                            <Copy className="size-4" onClick={handleShare} />
+                                        </span>
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+
+                        <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={() => handleExport(project._id)} disabled={loading}>
+
+                            {loading ?
+
+                                "Exporting..." :
+
+                                <>
+                                    <Download className="size-3.5" />
+                                    <p className="hidden md:flex">Export</p>
+                                </>
+
+                            }
+
                         </Button>
                     </div>
 
                 </header>
 
 
-                <main>
+                <main className="flex-1 overflow-auto p-0 sm:p-6 md:px-12">
                     <div className="p-8 space-y-8">
                         <div>
                             <h1 className="text-3xl font-semibold">Project Details</h1>

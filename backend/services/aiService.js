@@ -5,7 +5,7 @@ export default async function generateArchitecture(prompt) {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "deepseek/deepseek-chat",
+        model: "openai/gpt-oss-120b:free",
         messages: [
           { role: "user", content: prompt }
         ],
@@ -28,7 +28,7 @@ export default async function generateArchitecture(prompt) {
       const fallback = await axios.post(
         "https://openrouter.ai/api/v1/chat/completions",
         {
-          model: "deepseek/deepseek-r1",
+          model: "google/gemma-4-31b-it:free",
           messages: [
             { role: "user", content: prompt }
           ],

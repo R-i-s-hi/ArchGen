@@ -26,15 +26,14 @@ import {
 import { useSidebar } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 
-export function AppSidebar({ projects = [], selectedProjectId }) {
+
+export function AppSidebar({ selectedProjectId}) {
 
   const router = useRouter()
   const { toggleSidebar } = useSidebar()
 
   const [fetchedProjects, setFetchedProjects] = useState([]);
-  const handleNewProject = () => {
-    router.push("/")
-  }
+  const [activeProject, setActiveProject] = useState(selectedProjectId || null);
 
   useEffect(() => {
     const fetchProj = async () => {
@@ -48,14 +47,13 @@ export function AppSidebar({ projects = [], selectedProjectId }) {
       }
     }
     fetchProj();
-  }, [fetchedProjects])
+  }, [])
 
 
   return (
     <Sidebar>
 
-
-      <SidebarHeader className="p-4 flex flex-row justify-between items-center">
+      <SidebarHeader className="p-4 flex flex-row justify-between items-center h-14 border-b border-border/40">
         <Link href="/" className="flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary">
             <BrainCircuit className="size-5 text-primary-foreground" />
@@ -67,22 +65,17 @@ export function AppSidebar({ projects = [], selectedProjectId }) {
         </button>
       </SidebarHeader>
 
-      <SidebarSeparator className="-ml-px" />
 
       <SidebarContent>
 
         <SidebarGroup>
-          <div className="px-4 py-[6px] rounded-[8px] bg-primary mt-2">
-            <Link
-              href="/"
-              onClick={handleNewProject}
-              className="w-full flex flex-row items-center justify-start gap-2 text-[13px] font-medium text-[white]"
-              size="sm"
-            >
-              <Plus className="size-4" />
-              New Project
-            </Link>
-          </div>
+          <Button
+            onClick={() => router.push("/")}
+            className="justify-start min-w-35 h-7.5 gap-[0.4rem] text-[12.5px] cursor-pointer"
+          >
+            <Plus className="size-3.5" />
+            New Chat
+          </Button>
         </SidebarGroup>
 
         <div className="flex flex-col gap-2 h-full">
@@ -100,7 +93,7 @@ export function AppSidebar({ projects = [], selectedProjectId }) {
                     <SidebarMenuItem key={project._id}>
                       <SidebarMenuButton
                         onClick={() => router.push(`/project/${project._id}`)}
-                        isActive={selectedProjectId === project._id}
+                        isActive={project._id === selectedProjectId}
                         className="cursor-pointer"
                       >
                         <FolderKanban className="size-4" />
@@ -128,7 +121,7 @@ export function AppSidebar({ projects = [], selectedProjectId }) {
                     <SidebarMenuItem key={project._id}>
                       <SidebarMenuButton
                         onClick={() => router.push(`/project/${project._id}`)}
-                        isActive={selectedProjectId === project._id}
+                        isActive={project._id === selectedProjectId}
                         className="cursor-pointer"
                       >
                         <span className="truncate">{project.prompt}</span>
@@ -144,7 +137,7 @@ export function AppSidebar({ projects = [], selectedProjectId }) {
         {fetchedProjects.length === 0 && (
           <div className="px-3 py-6 text-xs text-muted-foreground">
             No projects yet.
-            Generate your first architecture 🚀
+            Generate your first architecture
           </div>
         )}
 

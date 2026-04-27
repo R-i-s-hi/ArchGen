@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { generateProject } from "./controllers/generateController.js";
 import { getProjects } from "./controllers/controller.js";
 import { getProjectById } from "./controllers/controller.js";
+import { generateShareableLink } from "./controllers/controller.js";
 
 dotenv.config();
 
@@ -18,9 +19,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
+
 app.post("/api/generate", generateProject);
 app.get("/projects", getProjects);
 app.get("/project/:id", getProjectById);
+app.post("/chat/share/:chatId", generateShareableLink);
 
 
 const PORT = process.env.PORT || 5000;

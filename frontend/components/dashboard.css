@@ -1,0 +1,55 @@
+.cl-userButtonBox {
+  box-shadow: 1px 1px 3px 3px rgba(255,255,255, 0.1);
+  border-radius: inherit;
+}
+
+.cl-userButtonPopoverCard {
+  width: 170px !important;
+  min-width: 150px !important;
+}
+
+.cl-userPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cl-userButtonAvatarBox, .cl-userButtonBox, .cl-userButtonAvatarImage {
+  height: 24px !important;
+  width: 24px !important;
+}
+.cl-userPreviewAvatarImage {
+  width: 45px !important;
+}
+
+.cl-userPreviewMainIdentifierText {
+  font-size: 11px;
+  text-align: center;
+  width: 100%;
+}
+
+.cl-userPreviewSecondaryIdentifier {
+  font-size: 11px;
+}
+
+.cl-userButtonPopoverActionButton {
+  padding: 5px 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0.4rem;
+}
+
+.cl-userButtonPopoverActionButton:hover {
+  color: #fff;
+}
+
+.cl-button__signOut:hover {
+  background-color: red;
+}
+
+
+.cl-cardBox {
+  height: calc(-2rem + 100dvh);
+}
