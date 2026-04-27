@@ -1,6 +1,6 @@
 "use-client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Database, Server, Globe, Cpu, Cloud, Code2, Copy, Check } from "lucide-react"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -11,20 +11,68 @@ import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Button } from "@/components/ui/button"
 import { ArchitectureCard } from "@/components/architecture-card"
 import { dark } from "@clerk/ui/themes"
+import { useAuth } from "@clerk/nextjs"
 import "./dashboard.css"
 
 
 function DashboardContent() {
+
+    const { userId, isSignedIn } = useAuth()
 
     const [projectIdea, setProjectIdea] = useState("")
     const [isGenerating, setIsGenerating] = useState(false)
     const [ansGenerated, setAnsGenerated] = useState(false)
     const [architecture, setArchitecture] = useState(null)
     const [loading, setLoading] = useState(false)
+    
+    useEffect(() => {
+        if (!isSignedIn || !userId) return
 
+        const guestId = localStorage.getItem("guestId")
+        if (!guestId) return
+
+        const migrate = async () => {
+            try {
+                const res = await fetch("http://localhost:5000/api/migrate-guest", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        guestId,
+                        clerkId: userId,
+                    }),
+                })
+
+                const data = await res.json()
+
+                if (data.success) {
+                    localStorage.removeItem("guestId")
+                    toast.success(`Migrated ${data.migratedCount} chats to ${user.id}`)
+                }
+            } catch (err) {
+                console.error("Guest migration failed:", err)
+            }
+        }
+
+        migrate()
+    }, [isSignedIn, userId])
 
     const handleGenerate = async () => {
         if (!projectIdea) return
+
+        let ownerId;
+        let ttl = null;
+
+        if (isSignedIn) {
+            ownerId = userId;
+        } else {
+            ownerId = localStorage.getItem("guestId");
+            if (!ownerId) {
+                ownerId = "guest-" + crypto.randomUUID();
+                localStorage.setItem("guestId", ownerId);
+            }
+            ttl = 24 * 60 * 60;
+        }
+
 
         setIsGenerating(true)
         setProjectIdea("");
@@ -35,7 +83,7 @@ function DashboardContent() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ prompt: projectIdea }),
+                body: JSON.stringify({ prompt: projectIdea, ownerId, ttl }),
             })
 
             const data = await res.json()

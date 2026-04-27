@@ -36,7 +36,7 @@ export function ProjectInput({
             <Button
               onClick={onGenerate}
               disabled={!value.trim() || isGenerating}
-              className="min-w-[140px] gap-2 cursor-pointer"
+              className="min-w-35 gap-2 cursor-pointer"
             >
               {isGenerating ? (
                 <>

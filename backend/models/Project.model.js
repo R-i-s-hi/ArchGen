@@ -59,9 +59,15 @@ const ProjectSchema = new mongoose.Schema(
                     default: ""
                 }
             }
-        ]
+        ],
+        expireAt: {
+            type: Date,
+            default: null
+        },
     },
     { timestamps: true }
 );
+
+ProjectSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 export default mongoose.model("Project", ProjectSchema);

@@ -25,7 +25,7 @@ function extractJSON(text) {
 
 export const generateProject = async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, ownerId, ttl } = req.body;
 
     if (!prompt) {
       return res.status(400).json({
@@ -33,12 +33,14 @@ export const generateProject = async (req, res) => {
       });
     }
 
+    if(!ownerId) {
+      return res.status(400).json({
+        error: "owner is required"
+      });
+    }
+
     const systemPrompt = buildPrompt(prompt);
-
     const result = await generateArchitecture(systemPrompt);
-    console.log("TYPE:", typeof result);
-    console.log("RAW:", result);
-
     const cleanJSON = extractJSON(result);
 
     if (!cleanJSON) {
@@ -53,13 +55,18 @@ export const generateProject = async (req, res) => {
     try {
       parsed = JSON.parse(cleanJSON);
       const newProject = await Project.create({
+        owner: ownerId,
         prompt,
         tech_stack: parsed.tech_stack,
         folder_structure: parsed.folder_structure,
         database_schema: parsed.database_schema,
         api_routes: parsed.api_routes,
         feature_roadmap: parsed.feature_roadmap,
-        explanation: parsed.explanation
+        explanation: parsed.explanation,
+        ...(ttl
+          ? { expireAt: new Date(Date.now() + ttl * 1000) }
+          : {}
+        ),
       });
       return res.json({
         success: true,

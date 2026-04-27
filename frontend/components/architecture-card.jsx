@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table"
 import "./architectureCard.css"
 
-// Recursive renderer for nested objects/arrays
+
 const RenderFields = ({ fields }) => {
   if (!fields || typeof fields !== "object" || Array.isArray(fields)) return null;
 
@@ -50,9 +50,6 @@ const RenderFields = ({ fields }) => {
   );
 };
 
-
-
-
 export function ArchitectureCard({ data }) {
   if (!data || typeof data !== "object") {
     return <p>Invalid data</p>;
@@ -72,7 +69,7 @@ export function ArchitectureCard({ data }) {
                 {data.explanation.map((e, i) => (
                   <div className="mb-2" key={i}>
                     <strong> • {e.title}</strong>
-                    <p className="ml-[10px] text-[#f5f5f5d6]">{e.reason}</p>
+                    <p className="ml-2.5 text-[#f5f5f5d6]">{e.reason}</p>
                   </div>
                 ))}
               </CardContent>
@@ -80,6 +77,7 @@ export function ArchitectureCard({ data }) {
           </>
         )}
       </div>
+      
       <div className="grid grid-cols-1 gap-y-7 md:gap-y-12 gap-x-7 md:grid-cols-2">
 
         <div>
@@ -88,9 +86,6 @@ export function ArchitectureCard({ data }) {
             Tech Stack
           </h3>
           <Card className="max-h-fit">
-            {/* <CardHeader>
-            <CardTitle>Tech Stack</CardTitle>
-          </CardHeader> */}
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2">Frontend</h3>
@@ -184,9 +179,6 @@ export function ArchitectureCard({ data }) {
             Database Schema
           </h3>
           <Card>
-            {/* <CardHeader>
-            <CardTitle>Database Schema</CardTitle>
-          </CardHeader> */}
             <CardContent>
               {Object.entries(data?.database_schema || {}).map(([model, fields]) => (
                 <div key={model} className="mb-4">

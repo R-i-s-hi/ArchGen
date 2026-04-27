@@ -25,20 +25,39 @@ import {
 
 import { useSidebar } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@clerk/nextjs"
 
 
-export function AppSidebar({ selectedProjectId}) {
+export function AppSidebar({ selectedProjectId }) {
+
+  const { userId, isSignedIn } = useAuth()
 
   const router = useRouter()
   const { toggleSidebar } = useSidebar()
 
   const [fetchedProjects, setFetchedProjects] = useState([]);
   const [activeProject, setActiveProject] = useState(selectedProjectId || null);
+  const [guestId, setGuestId] = useState(null);
+
+  useEffect(() => {
+    const id = localStorage.getItem("guestId")
+    setGuestId(id)
+  }, [])
 
   useEffect(() => {
     const fetchProj = async () => {
+      const ownerId = isSignedIn ? userId : guestId;
+      if(!ownerId) return;
+
       try {
-        const res = await fetch("http://localhost:5000/projects");
+        const res = await fetch("http://localhost:5000/projects", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ownerId })
+        });
+
         const result = await res.json();
         setFetchedProjects(result.data);
 
@@ -132,14 +151,15 @@ export function AppSidebar({ selectedProjectId}) {
               </SidebarGroupContent>
             </SidebarGroup>
           )}
+
+          {fetchedProjects.length === 0 && (
+            <div className="flex items-center justify-center text-xs h-full text-center text-muted-foreground">
+              No projects yet.
+              Generate your first architecture
+            </div>
+          )}
         </div>
 
-        {fetchedProjects.length === 0 && (
-          <div className="px-3 py-6 text-xs text-muted-foreground">
-            No projects yet.
-            Generate your first architecture
-          </div>
-        )}
 
       </SidebarContent>
     </Sidebar>

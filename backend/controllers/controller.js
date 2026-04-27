@@ -5,8 +5,11 @@ import ShareChat from "../models/ShareChat.model.js"
 
 
 export const getProjects = async (req, res) => {
+
+    const {ownerId} = req.body;
+
     try {
-        const projects = await Project.find().sort({ createdAt: -1 });
+        const projects = await Project.find({ownerId}).sort({ createdAt: -1 });
         res.json({ success: true, data: projects });
     } catch (err) {
         res.json({ success: false, error: "Failed to fetch projects" });
@@ -53,4 +56,30 @@ export const ViewSharedChat = async (req, res) => {
 
     const chat = await getChatById(share.chatId);
     return res.status(200).json({ data: chat });
+}
+
+export const migrateGuest = async (req, res) => {
+    const { guestId, clerkId } = req.body
+
+    if (!guestId || !clerkId) {
+        return res.status(400).json({ success: false, error: "Missing guestId or clerkId" })
+    }
+
+    try {
+        const result = await Project.updateMany(
+            { ownerId: guestId },
+            {
+                $set: { ownerId: clerkId },
+                $unset: { expireAt: "" },
+            }
+        )
+
+        res.json({
+            success: true,
+            migratedCount: result.modifiedCount,
+        })
+    } catch (err) {
+        console.error("Migration error:", err)
+        res.status(500).json({ success: false, error: "Migration failed" })
+    }
 }

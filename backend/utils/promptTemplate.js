@@ -60,5 +60,8 @@ Return this exact structure:
     }
   ]
 }
+
+CRITICAL: Output the JSON object above filled with real values. 
+Do NOT include any text, markdown, or code fences before or after the JSON.
 `;
 }
