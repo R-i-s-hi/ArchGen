@@ -85,7 +85,7 @@ export function ArchitectureCard({ data }) {
           <h3 className="text-xl font-semibold ml-1.5 mb-3">
             Tech Stack
           </h3>
-          <Card className="max-h-fit">
+          <Card className="max-h-fit overflow-x-auto">
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2">Frontend</h3>
@@ -129,7 +129,7 @@ export function ArchitectureCard({ data }) {
                 <TableCaption className="text-[12px]">These are main API routes which will create the app. You can create your custom Routes</TableCaption>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Method</TableHead>
+                    <TableHead className="w-25">Method</TableHead>
                     <TableHead>Path</TableHead>
                     <TableHead>Description</TableHead>
                   </TableRow>
@@ -202,7 +202,7 @@ export function ArchitectureCard({ data }) {
                   <li key={i}>
                     <div className="node" />
                     <div className="content">
-                      <Badge className="px-3 py-[3px] font-medium mb-1 rounded-tl-none">{f.name}</Badge>
+                      <Badge className="px-3 py-0.75 font-medium mb-1 rounded-tl-none">{f.name}</Badge>
                       <p className="text-sm text-muted-foreground ml-1 font-medium leading-tight">
                         {f.description}
                       </p>

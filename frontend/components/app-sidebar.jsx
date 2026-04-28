@@ -42,6 +42,7 @@ export function AppSidebar({ selectedProjectId }) {
   useEffect(() => {
     const id = localStorage.getItem("guestId")
     setGuestId(id)
+    console.log(id);
   }, [])
 
   useEffect(() => {
@@ -50,13 +51,7 @@ export function AppSidebar({ selectedProjectId }) {
       if(!ownerId) return;
 
       try {
-        const res = await fetch("http://localhost:5000/projects", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ownerId })
-        });
+        const res = await fetch(`http://localhost:5000/projects?ownerId=${ownerId}`);
 
         const result = await res.json();
         setFetchedProjects(result.data);
@@ -66,7 +61,7 @@ export function AppSidebar({ selectedProjectId }) {
       }
     }
     fetchProj();
-  }, [])
+  }, [userId, isSignedIn, guestId])
 
 
   return (

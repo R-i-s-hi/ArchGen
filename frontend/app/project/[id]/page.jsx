@@ -19,9 +19,13 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Copy } from "lucide-react"
+import {Show, SignInButton, SignUpButton, UserButton, useAuth} from "@clerk/nextjs"
+import { dark } from "@clerk/ui/themes"
+
 
 export default function ProjectPage({ params }) {
     const { id } = use(params)
+    const { userId, isSignedIn } = useAuth()
     const router = useRouter()
     const [project, setProject] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -108,58 +112,77 @@ export default function ProjectPage({ params }) {
         <SidebarProvider>
             <AppSidebar selectedProjectId={project._id} />
             <SidebarInset>
-                <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b border-border/40 bg-background/80 px-4 backdrop-blur-sm">
-                    <SidebarTrigger className="-ml-1 cursor-pointer" />
-                    <Separator orientation="vertical" className="h-4" />
-                    <div className="flex flex-1 items-center gap-2">
-                        <BrainCircuit className="size-4 text-primary" />
-                        <span className="font-medium">ArchGen</span>
-                    </div>
+                <header className="sticky top-0 z-10 flex h-14 items-center justify-center border-b border-border/40 bg-background/80 px-4 backdrop-blur-md">
 
-                    <div className="flex items-center gap-2">
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
-                                    <Share2 className="size-3.5" />
-                                    <p className="hidden md:flex">Share</p>
+                    <div className="flex items-center justify-center w-full max-w-5xl">
+                        <div className="flex flex-1 items-center gap-2">
+                            <BrainCircuit className="size-5 text-primary" />
+                            <span className="font-larger">ArchGen</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <Show when="signed-out" >
+                                <SignInButton>
+                                    <p className="text-[12px] text-muted-foreground cursor-pointer hover:text-white mr-3">Sign in</p>
+                                </SignInButton>
+                                <SignUpButton>
+                                    <Button className="py-0.5 px-3 text-[11px] font-medium cursor-pointer h-6.5 w-fit">
+                                        Signup
+                                    </Button>
+                                </SignUpButton>
+                            </Show>
+                            <Show when="signed-in">
+                                <UserButton appearance={{theme: dark}}/>
+                            </Show>
+                            {/* <div className="flex items-center gap-2">
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
+                                            <Share2 className="size-3.5" />
+                                            <p className="hidden md:flex">Share</p>
+                                        </Button>
+
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>Share your chat link</DialogTitle>
+                                            <DialogDescription>
+                                                copy link
+                                                <span className="flex items-center gap-1.5 mt-1">
+                                                    <Input placeholder="euigwefgafbauisdfviufhguioefgefjbh" className="focus:outline-none focus:ring-0 border-[#8b90959d]" disabled />
+                                                    <Copy className="size-4" onClick={handleShare} />
+                                                </span>
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                    </DialogContent>
+                                </Dialog>
+
+                                <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={() => handleExport(project._id)} disabled={loading}>
+
+                                    {loading ?
+
+                                        "Exporting..." :
+
+                                        <>
+                                            <Download className="size-3.5" />
+                                            <p className="hidden md:flex">Export</p>
+                                        </>
+
+                                    }
+
                                 </Button>
-
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Share your chat link</DialogTitle>
-                                    <DialogDescription>
-                                        copy link
-                                        <span className="flex items-center gap-1.5 mt-1">
-                                            <Input placeholder="euigwefgafbauisdfviufhguioefgefjbh" className="focus:outline-none focus:ring-0 border-[#8b90959d]" disabled />
-                                            <Copy className="size-4" onClick={handleShare} />
-                                        </span>
-                                    </DialogDescription>
-                                </DialogHeader>
-                            </DialogContent>
-                        </Dialog>
-
-                        <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={() => handleExport(project._id)} disabled={loading}>
-
-                            {loading ?
-
-                                "Exporting..." :
-
-                                <>
-                                    <Download className="size-3.5" />
-                                    <p className="hidden md:flex">Export</p>
-                                </>
-
-                            }
-
-                        </Button>
+                            </div> */}
+                        </div>
                     </div>
 
                 </header>
 
 
-                <main className="flex-1 overflow-auto p-0 sm:p-6 md:px-12">
-                    <div className="p-8 space-y-8">
+                <main className="flex-1 overflow-auto pt-4 p-8">
+                    <div className="mx-auto max-w-5xl space-y-8">
+                    <div className="max-w-fit max-h-fit">
+                        <SidebarTrigger className="cursor-pointer bg-primary text-black" />
+                    </div>
                         <div>
                             <h1 className="text-3xl font-semibold">Project Details</h1>
                             <h1 className="text-md text-muted-foreground font-semibold">promt used: <i>"{project.prompt}"</i></h1>

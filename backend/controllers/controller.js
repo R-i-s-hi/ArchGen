@@ -6,7 +6,7 @@ import ShareChat from "../models/ShareChat.model.js"
 
 export const getProjects = async (req, res) => {
 
-    const {ownerId} = req.body;
+    const {ownerId} = req.query;
 
     try {
         const projects = await Project.find({ownerId}).sort({ createdAt: -1 });
