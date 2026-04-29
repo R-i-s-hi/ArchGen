@@ -14,12 +14,15 @@ import {
     DialogContent,
     DialogDescription,
     DialogHeader,
+    DialogFooter,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
 } from "@/components/ui/dialog"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Copy } from "lucide-react"
-import {Show, SignInButton, SignUpButton, UserButton, useAuth} from "@clerk/nextjs"
+import { Show, SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs"
 import { dark } from "@clerk/ui/themes"
 
 
@@ -29,6 +32,8 @@ export default function ProjectPage({ params }) {
     const router = useRouter()
     const [project, setProject] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [showPrompt, setShowPrompt] = useState(false)
+    const [shareLink, setShareLink] = useState("")
 
     const fetchProject = async () => {
         try {
@@ -74,19 +79,47 @@ export default function ProjectPage({ params }) {
 
     const handleShare = async (chatId) => {
         try {
-            const res = await fetch(`http://localhost:5000/chat/share/${chatId}`, { method: "POST" });
+            const res = await fetch(`http://localhost:5000/chat/share/${chatId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ ownerId: project.ownerId }),
+            });
 
-            const currentUrl = window.location.href;
-            navigator.clipboard.writeText(currentUrl)
-                .then(() => {
-                    alert("Link copied to clipboard!");
-                })
-                .catch(err => {
-                    console.error("Failed to copy: ", err);
-                });
+            const data = await res.json();
+            if (data?.shareLink) setShareLink(data.shareLink);
         } catch (e) {
             console.log(e);
         }
+    }
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(shareLink)
+            .then(() => {
+                alert("Link copied to clipboard!");
+            })
+            .catch(err => {
+                console.error("Failed to copy: ", err);
+            });
+    }
+
+    const DateShow = (inputDate) => {
+        const dateObj = new Date(inputDate);
+
+        const formatted = dateObj.toLocaleDateString("en-US", {
+            weekday: "short",   // Tue
+            year: "numeric",    // 2026
+            month: "long",      // April
+            day: "numeric"      // 28
+        });
+
+        const time = dateObj.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+        return `${formatted} at ${time}`;
     }
 
     if (!project) {
@@ -132,46 +165,85 @@ export default function ProjectPage({ params }) {
                                 </SignUpButton>
                             </Show>
                             <Show when="signed-in">
-                                <UserButton appearance={{theme: dark}}/>
+                                <div className="flex items-center gap-3">
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={() => handleShare(id)}>
+                                                <Share2 className="size-3.5" />
+                                                <p className="hidden md:flex">Share</p>
+                                            </Button>
+
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Share your chat link</DialogTitle>
+                                                {shareLink.length > 0 ? (
+                                                    <>
+                                                        <DialogDescription className="my-6 space-y-3">
+                                                            <p>Anyone with this link can see this chat.</p>
+                                                            <Input placeholder={shareLink} className="focus:outline-none focus:ring-0 border-[#8b90959d] h-8" disabled />
+                                                        </DialogDescription>
+                                                    </>
+                                                ) : (
+                                                    <p className="my-6 flex justify-center items-center text-center">
+                                                        <Spinner />&nbsp;&nbsp;Loading...
+                                                    </p>
+                                                )}
+                                            </DialogHeader>
+                                            <DialogFooter>
+                                                <DialogClose asChild>
+                                                    <Button className="h-8 cursor-pointer" disabled={shareLink.length === 0}>
+                                                        <span>Cancel</span>
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button className="h-8 cursor-pointer" onClick={handleCopy} disabled={shareLink.length === 0}>
+                                                    <span>Copy</span>
+                                                    <Copy className="size-4"/>
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
+                                                <Download className="size-3.5" />
+                                                <p className="hidden md:flex">Export</p>
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Export PDF</DialogTitle>
+                                                {!loading ? (
+                                                    <>
+                                                        <DialogDescription className="my-6 space-y-3">
+                                                            <p>Generate a precise and well‑ordered PDF containing all project details, formatted for easy sharing and record‑keeping.</p>
+                                                        </DialogDescription>
+                                                    </>
+                                                ) : (
+                                                    <p className="my-6 flex justify-center items-center text-center">
+                                                        <Spinner />&nbsp;&nbsp;Loading...
+                                                    </p>
+                                                )}
+                                            </DialogHeader>
+                                            <DialogFooter>
+                                                <DialogClose asChild>
+                                                    <Button className="h-8 cursor-pointer">
+                                                        <span>Cancel</span>
+                                                    </Button>
+                                                </DialogClose>
+                                                
+                                                <Button className="h-8 cursor-pointer" onClick={() => handleExport(project._id)} disabled={loading}>
+                                                    <span>Download</span>
+                                                    <Download className="size-4"/>
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+
+                                    <UserButton appearance={{ theme: dark }} />
+                                </div>
                             </Show>
-                            {/* <div className="flex items-center gap-2">
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
-                                            <Share2 className="size-3.5" />
-                                            <p className="hidden md:flex">Share</p>
-                                        </Button>
-
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>Share your chat link</DialogTitle>
-                                            <DialogDescription>
-                                                copy link
-                                                <span className="flex items-center gap-1.5 mt-1">
-                                                    <Input placeholder="euigwefgafbauisdfviufhguioefgefjbh" className="focus:outline-none focus:ring-0 border-[#8b90959d]" disabled />
-                                                    <Copy className="size-4" onClick={handleShare} />
-                                                </span>
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                    </DialogContent>
-                                </Dialog>
-
-                                <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={() => handleExport(project._id)} disabled={loading}>
-
-                                    {loading ?
-
-                                        "Exporting..." :
-
-                                        <>
-                                            <Download className="size-3.5" />
-                                            <p className="hidden md:flex">Export</p>
-                                        </>
-
-                                    }
-
-                                </Button>
-                            </div> */}
                         </div>
                     </div>
 
@@ -180,15 +252,31 @@ export default function ProjectPage({ params }) {
 
                 <main className="flex-1 overflow-auto pt-4 p-8">
                     <div className="mx-auto max-w-5xl space-y-8">
-                    <div className="max-w-fit max-h-fit">
-                        <SidebarTrigger className="cursor-pointer bg-primary text-black" />
-                    </div>
+                        <div className="max-w-fit max-h-fit">
+                            <SidebarTrigger className="cursor-pointer bg-primary text-black" />
+                        </div>
                         <div>
+                            <div className="flex justify-between items-top">
                             <h1 className="text-3xl font-semibold">Project Details</h1>
-                            <h1 className="text-md text-muted-foreground font-semibold">promt used: <i>"{project.prompt}"</i></h1>
-                            {/* <p>Created at: {project.createdAt}</p>
-                            <p>Updated at: {project.updatedAt}</p> */}
-                            <hr className="my-4" />
+                            <div className="text-end">
+                                <p className="text-muted-foreground text-xs font-semibold"><i>{DateShow(project.createdAt)}</i></p>
+                                <Button className="p-0 text-xs h-fit leading-none cursor-pointer" variant="link" onClick={() => setShowPrompt(true)}>
+                                    <i>View full prompt</i>
+                                </Button>
+                                {showPrompt && (
+                                    <Dialog open={showPrompt} onOpenChange={setShowPrompt}>
+                                        <DialogContent className="fixed top-25 left-1/2 -translate-x-1/2 sm:max-w-sm">
+                                            <DialogHeader>
+                                                <DialogTitle>Original Prompt</DialogTitle>
+                                                <DialogDescription>{project.prompt}</DialogDescription>
+                                            </DialogHeader>
+                                        </DialogContent>
+                                    </Dialog>
+                                )}
+                            </div>
+
+                        </div>
+                        <hr className="my-4" />
                         </div>
                         <ArchitectureCard data={project} />
                     </div>
