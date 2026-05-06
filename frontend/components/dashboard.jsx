@@ -12,6 +12,7 @@ import { dark } from "@clerk/ui/themes"
 import { Button } from "@/components/ui/button"
 import { ArchitectureCard } from "@/components/architecture-card"
 import "./dashboard.css"
+import { toast } from "sonner"
 
 
 function DashboardContent() {
@@ -138,6 +139,16 @@ function DashboardContent() {
         }
     }
 
+    const handleCopyUserId = async() => {
+        navigator.clipboard.writeText(userId)
+            .then(() => {
+                toast.success("ID copied to clipboard!", { position: "top-center" });
+            })
+            .catch(err => {
+                console.error("Failed to copy: ", err);
+            });
+    }
+
     return (
         <>
             <AppSidebar selectedProjectId={architecture} />
@@ -162,7 +173,17 @@ function DashboardContent() {
                                 </SignUpButton>
                             </Show>
                             <Show when="signed-in">
-                                <UserButton appearance={{theme: dark}}/>
+                                <UserButton appearance={{ theme: dark }}>
+                                    <UserButton.MenuItems>
+                                        <UserButton.Action 
+                                            label="Copy UserId"
+                                            labelIcon={<Copy className="size-3 ml-0.5"/>}
+                                            onClick={() => handleCopyUserId()}
+                                        />
+                                        <UserButton.Action label="manageAccount" />
+                                        <UserButton.Action label="signOut" />
+                                    </UserButton.MenuItems>
+                                </UserButton>
                             </Show>
                         </div>
                     </div>

@@ -32,13 +32,13 @@ export const generateShareableLink = async (req, res) => {
         const ownerId = req.body.ownerId;
 
         const token = crypto.randomBytes(32).toString("hex");
-        const expiresAt = new Date(Date.now() + 1000 * 60 * 10);
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-        const share = new ShareChat({ chatId, ownerId, token, expiresAt });
+        const share = new ShareChat({ chatId, ownerId, token, expiresAt, allowedViewers: req.body.restrictedUsers || [] });
         await share.save();
 
-        const shareUrl = `http://localhost:5000/view/${token}`;
-        return res.status(200).json({ shareUrl });
+        const shareLink = `http://localhost:3000/view/${token}`;
+        return res.status(200).json({ shareLink });
 
     } catch (e) {
         console.log(e);
@@ -50,11 +50,18 @@ export const ViewSharedChat = async (req, res) => {
     const { token } = req.params;
     const sharedChat = await ShareChat.findOne({ token });
 
-    if (!sharedChat || share.sharedChat < new Date()) {
+    if (!sharedChat || sharedChat.expiresAt < new Date()) {
         return res.status(403).send("Link expired or invalid");
     }
 
-    const chat = await getChatById(share.chatId);
+    if (sharedChat.allowedViewers.length > 0) {
+        const currentUserId = req.user?.id;
+        if (!sharedChat.allowedViewers.includes(currentUserId)) {
+            return res.status(403).json({ error: "Access restricted" });
+        }
+    }
+
+    const chat = await Project.findById(sharedChat.chatId);
     return res.status(200).json({ data: chat });
 }
 

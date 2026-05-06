@@ -20,6 +20,8 @@ const ShareChatSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+ShareChatSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 const ShareChat = mongoose.model("ShareChat", ShareChatSchema);
 
 export default ShareChat;

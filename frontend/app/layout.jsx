@@ -2,13 +2,14 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { ClerkProvider} from '@clerk/nextjs'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
+import { Toaster } from "@/components/ui/sonner"
 import { dark } from '@clerk/ui/themes';
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'AI Project Architect',
+  title: 'ArchGen - AI Project Architect',
   description: 'Generate project architectures with AI',
   generator: 'v0.app',
   icons: {
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
           {children}
           <Analytics />
         </ClerkProvider>
+        <Toaster/>
       </body>
     </html>
   )
