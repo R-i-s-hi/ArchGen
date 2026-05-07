@@ -19,8 +19,10 @@
   height: 24px !important;
   width: 24px !important;
 }
-.cl-userPreviewAvatarImage {
+
+.cl-userPreviewAvatarContainer, .cl-userPreviewAvatarBox,  .cl-userPreviewAvatarImage {
   width: 50px !important;
+  height: 50px;
 }
 
 .cl-userPreviewMainIdentifierText {
@@ -33,7 +35,7 @@
   font-size: 11px;
 }
 
-.cl-userButtonPopoverActionButton {
+.cl-userButtonPopoverActionButton, .cl-userButtonPopoverCustomItemButton {
   padding: 8px 10px !important;
   display: flex;
   align-items: center;
@@ -44,11 +46,13 @@
 .cl-userButtonPopoverActionButton:hover {
   color: #fff;
 }
+.cl-userButtonPopoverCustomItemButton:hover {
+  color: #fff;
+}
 
 .cl-button__signOut:hover {
   background-color: red;
 }
-
 
 .cl-cardBox {
   height: calc(-2rem + 100dvh);

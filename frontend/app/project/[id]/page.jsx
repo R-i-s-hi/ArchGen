@@ -1,12 +1,11 @@
 "use client"
 
+import Link from "next/link"
 import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ArchitectureCard } from "@/components/architecture-card"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Layers, BrainCircuit, Download, Share2, ArrowLeft, Calendar, CheckCircle2, Clock, FileEdit } from "lucide-react"
 import {
@@ -22,7 +21,6 @@ import {
 import {
     Field,
     FieldContent,
-    FieldDescription,
     FieldLabel,
     FieldTitle,
 } from "@/components/ui/field"
@@ -34,12 +32,12 @@ import {
 } from "@/components/ui/collapsible"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
-import { Copy, HatGlasses, ChevronRightIcon } from "lucide-react"
+import { Copy, HatGlasses, ChevronRightIcon, UserLock, Users } from "lucide-react"
 import { Show, SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs"
 import { dark } from "@clerk/ui/themes"
+import { toast } from "sonner"
 
 import "./page.css"
-import { toast } from "sonner"
 
 
 export default function ProjectPage({ params }) {
@@ -71,6 +69,7 @@ export default function ProjectPage({ params }) {
     const handleExport = async () => {
         if (!project) return;
         setLoading(true);
+        const toastId = toast.loading("Downloading PDF!", {position: "bottom-right"});
 
         try {
             const res = await fetch("/api/export-pdf", {
@@ -88,9 +87,10 @@ export default function ProjectPage({ params }) {
             a.download = `chat-${Date.now()}.pdf`;
             a.click();
             URL.revokeObjectURL(url);
+            toast.success("PDF Downloaded!", {id: toastId, position: "bottom-right"});
         } catch (err) {
             console.error(err);
-            alert("Failed to export PDF. Please try again.");
+            toast.error("Failed to export PDF. Please try again.", {id: toastId, position: "bottom-right",});
         } finally {
             setLoading(false);
         }
@@ -117,7 +117,7 @@ export default function ProjectPage({ params }) {
     const handleCopy = () => {
         navigator.clipboard.writeText(shareLink)
             .then(() => {
-                toast.success("Link Copied!", {position: "bottom-right"})
+                toast.success("Link Copied!", { position: "bottom-right" })
             })
             .catch(err => {
                 console.error("Failed to copy: ", err);
@@ -127,7 +127,7 @@ export default function ProjectPage({ params }) {
         setRestrictUserId("");
     }
 
-    const handleCopyUserId = async() => {
+    const handleCopyUserId = async () => {
         navigator.clipboard.writeText(userId)
             .then(() => {
                 toast.success("ID copied to clipboard!", { position: "top-center" });
@@ -137,7 +137,7 @@ export default function ProjectPage({ params }) {
             });
     }
 
-    const handleAddUserIds = async() => {
+    const handleAddUserIds = async () => {
         if (!restrictUserId.trim()) return;
         setIds(prev => [...prev, restrictUserId.trim()]);
         setRestrictUserId("");
@@ -186,11 +186,13 @@ export default function ProjectPage({ params }) {
             <SidebarInset>
                 <header className="sticky top-0 z-10 flex h-14 items-center justify-center border-b border-border/40 bg-background/80 px-4 backdrop-blur-md">
 
-                    <div className="flex items-center justify-center w-full max-w-5xl">
-                        <div className="flex flex-1 items-center gap-2">
-                            <BrainCircuit className="size-5 text-primary" />
-                            <span className="font-larger">ArchGen</span>
-                        </div>
+                    <div className="flex items-center justify-between w-full max-w-5xl">
+                        <Link href="/">
+                            <div className="flex items-center p-1 rounded-[4px] gap-2 cursor-pointer hover:bg-secondary">
+                                <BrainCircuit className="size-5 text-primary" />
+                                <span className="font-larger w-fit">ArchGen</span>
+                            </div>
+                        </Link>
 
                         <div className="flex items-center gap-2">
                             <Show when="signed-out" >
@@ -222,12 +224,12 @@ export default function ProjectPage({ params }) {
                                             <DialogHeader>
                                                 <DialogTitle>Share your chat link</DialogTitle>
 
-                                                <DialogDescription className="mt-3 pl-3">
-                                                    Choose how you want to share your chat.<br/>You can use the chat link for 3 days.
+                                                <DialogDescription className="mt-3 pl-3 max-w-2xs">
+                                                    Choose how you want to share your chat. You can use the chat link for 3 days.
                                                 </DialogDescription>
 
 
-                                                <div className="my-6 space-y-3">
+                                                <div className="my-6 mt-3 space-y-3">
                                                     <Collapsible>
                                                         <CollapsibleTrigger asChild>
                                                             <Button
@@ -249,9 +251,10 @@ export default function ProjectPage({ params }) {
                                                             >
                                                                 <FieldLabel className="cursor-pointer text-left" htmlFor="anyone">
                                                                     <Field orientation="horizontal">
-                                                                        <FieldContent>
+                                                                        <FieldContent className="gap-0.5" >
+                                                                            <Users className="size-5" />
                                                                             <FieldTitle>Anyone</FieldTitle>
-                                                                            <span className="text-muted-foreground text-sm">
+                                                                            <span className="text-muted-foreground text-[11px]">
                                                                                 Anyone can see your chat.
                                                                             </span>
                                                                         </FieldContent>
@@ -261,9 +264,10 @@ export default function ProjectPage({ params }) {
 
                                                                 <FieldLabel className="cursor-pointer text-left" htmlFor="restricted">
                                                                     <Field orientation="horizontal">
-                                                                        <FieldContent>
+                                                                        <FieldContent className="gap-0.5">
+                                                                            <UserLock className="size-5" />
                                                                             <FieldTitle>Restricted</FieldTitle>
-                                                                            <span className="text-muted-foreground text-sm">
+                                                                            <span className="text-muted-foreground text-[11px]">
                                                                                 Only granted users can see the chat.
                                                                             </span>
                                                                         </FieldContent>
@@ -276,18 +280,18 @@ export default function ProjectPage({ params }) {
                                                             {visibility === "restricted" && (
                                                                 <>
                                                                     {ids.length > 0 && (
-                                                                            <span className="text-left text-[11px] text-[#f5f5f5] w-full">
-                                                                                <i>{ids.length} user added</i>
-                                                                            </span>
-                                                                        )}
+                                                                        <span className="text-left text-[11px] text-[#f5f5f5] w-full">
+                                                                            <i>{ids.length} user added</i>
+                                                                        </span>
+                                                                    )}
                                                                     <div className="flex gap-1 items-center">
                                                                         <Input
                                                                             value={restrictUserId}
                                                                             onChange={(e) => setRestrictUserId(e.target.value)}
                                                                             placeholder="Enter userId"
                                                                             className=" mt-2 h-8 text-[12px] border-[#8b90959d] focus:outline-none focus:ring-0"
-                                                                            
-                                                                        /> 
+
+                                                                        />
                                                                         <Button variant="secondary" className="h-8 mt-2 text-[12px] cursor-pointer" onClick={handleAddUserIds}>
                                                                             Add
                                                                         </Button>
@@ -297,7 +301,7 @@ export default function ProjectPage({ params }) {
                                                                 </>
                                                             )}
                                                         </CollapsibleContent>
-                                                            <hr className="opacity-30 my-1" />
+                                                        <hr className="opacity-30 my-1" />
                                                     </Collapsible>
 
                                                     <Input
@@ -312,6 +316,7 @@ export default function ProjectPage({ params }) {
                                                 <Button
                                                     className="h-8 cursor-pointer"
                                                     onClick={() => handleShare(id)}
+                                                    disabled={shareLink.length > 0}
                                                 >
                                                     <span>Get Link</span>
                                                 </Button>
@@ -339,17 +344,9 @@ export default function ProjectPage({ params }) {
                                         <DialogContent>
                                             <DialogHeader>
                                                 <DialogTitle>Export PDF</DialogTitle>
-                                                {!loading ? (
-                                                    <>
-                                                        <DialogDescription className="my-6 space-y-3">
-                                                            <span>Generate a precise and well‑ordered PDF containing all project details, formatted for easy sharing and record‑keeping.</span>
-                                                        </DialogDescription>
-                                                    </>
-                                                ) : (
-                                                    <p className="my-6 flex justify-center items-center text-center">
-                                                        <Spinner />&nbsp;&nbsp;Loading...
-                                                    </p>
-                                                )}
+                                                <DialogDescription className="my-6 space-y-3">
+                                                    <span>Generate a precise and well‑ordered PDF containing all project details, formatted for easy sharing and record‑keeping.</span>
+                                                </DialogDescription>
                                             </DialogHeader>
                                             <DialogFooter>
                                                 <DialogClose asChild>
@@ -358,19 +355,27 @@ export default function ProjectPage({ params }) {
                                                     </Button>
                                                 </DialogClose>
 
-                                                <Button className="h-8 cursor-pointer" onClick={() => handleExport(project._id)} disabled={loading}>
-                                                    <span>Download</span>
-                                                    <Download className="size-4" />
-                                                </Button>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        className="h-8 cursor-pointer" 
+                                                        onClick={() => {
+                                                            handleExport(project._id);
+                                                        }}
+                                                        disabled={loading}
+                                                    >
+                                                        <span>Download</span>
+                                                        <Download className="size-4" />
+                                                    </Button>
+                                                </DialogTrigger>
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>
 
                                     <UserButton appearance={{ theme: dark }}>
                                         <UserButton.MenuItems>
-                                            <UserButton.Action 
+                                            <UserButton.Action
                                                 label="Copy UserId"
-                                                labelIcon={<Copy className="size-3 ml-0.5"/>}
+                                                labelIcon={<Copy className="size-3 ml-0.5" />}
                                                 onClick={() => handleCopyUserId()}
                                             />
                                             <UserButton.Action label="manageAccount" />
@@ -393,7 +398,7 @@ export default function ProjectPage({ params }) {
                         <div>
                             <div className="flex justify-between items-top">
                                 <h1 className="text-3xl font-semibold">Project Details</h1>
-                                <div className="text-end leading-none">
+                                <div className="text-end leading-none projectDate">
                                     <p className="text-muted-foreground text-xs font-semibold"><i>{DateShow(project.createdAt)}</i></p>
                                     <Button className="p-0 text-xs h-fit cursor-pointer" variant="link" onClick={() => setShowPrompt(true)}>
                                         <i>View full prompt</i>
@@ -411,7 +416,7 @@ export default function ProjectPage({ params }) {
                                 </div>
 
                             </div>
-                            <hr className="my-4" />
+                            <hr className="my-4 opacity-50" />
                         </div>
                         <ArchitectureCard data={project} />
                     </div>

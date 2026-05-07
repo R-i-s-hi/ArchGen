@@ -1,5 +1,5 @@
-export default function buildPrompt() {
-  return `
+export const SYSTEM_PROMT = 
+  `
     You are a senior software architect.
 
     Return ONLY valid JSON. No explanations or markdown.
@@ -62,4 +62,3 @@ export default function buildPrompt() {
       ]
     }
   `;
-}

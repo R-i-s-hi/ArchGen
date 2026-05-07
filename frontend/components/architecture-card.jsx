@@ -12,6 +12,25 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import "./architectureCard.css"
+import mermaid from 'mermaid';
+import { useEffect, useRef } from 'react';
+
+mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: {
+    primaryColor: '#1a1a2e',
+    primaryTextColor: '#ffffff',
+    primaryBorderColor: '#00c896',
+    lineColor: '#00c896',
+    secondaryColor: '#0f0f1a',
+    tertiaryColor: '#111122',
+    background: '#0a0a0a',
+    mainBkg: '#1a1a2e',
+    nodeBorder: '#00c896',
+    clusterBkg: '#0f0f1a',
+    clusterBorder: '#00c896',
+    edgeLabelBackground: '#0a0a0a',
+    titleColor: '#ffffff',
+    fontSize: '14px'
+  } });
 
 
 const RenderFields = ({ fields }) => {
@@ -51,6 +70,23 @@ const RenderFields = ({ fields }) => {
 };
 
 export function ArchitectureCard({ data }) {
+
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!data.diagram) return;
+
+    const code = data.diagram
+      .replace(/subgraph (\w+)\[([^\]]*)\]/g, (_, id, label) => {
+        const cleanLabel = label.replace(/[()]/g, '');
+        return `subgraph ${id}[${cleanLabel}]`;
+      });
+
+    mermaid.render('arch-diagram-' + Date.now(), code).then(({ svg }) => {
+      containerRef.current.innerHTML = svg;
+    }).catch(err => console.error('Mermaid error:', err));
+  }, [data.diagram]);
+
   if (!data || typeof data !== "object") {
     return <p>Invalid data</p>;
   }
@@ -77,6 +113,13 @@ export function ArchitectureCard({ data }) {
           </>
         )}
       </div>
+
+      {data.diagram && ( 
+        <div className="mb-12">
+          <h3 className="text-xl font-semibold ml-1.5 mb-3">System Architecture</h3>
+          <div className="DiagramContainer" ref={containerRef} />
+        </div>
+      )}
       
       <div className="grid grid-cols-1 gap-y-7 md:gap-y-12 gap-x-7 md:grid-cols-2">
 
@@ -125,7 +168,7 @@ export function ArchitectureCard({ data }) {
           </h3>
           <Card>
             <CardContent>
-              <Table className="overflow-x-auto scroller">
+              <Table class>
                 <TableCaption className="text-[12px]">These are main API routes which will create the app. You can create your custom Routes</TableCaption>
                 <TableHeader>
                   <TableRow>

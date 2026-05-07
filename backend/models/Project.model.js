@@ -60,6 +60,10 @@ const ProjectSchema = new mongoose.Schema(
                 }
             }
         ],
+        diagram: {
+            type: String,
+            default: null,
+        },
         expireAt: {
             type: Date,
             default: null

@@ -61,3 +61,7 @@
     border-radius: 3px;
     border: 4px solid #0c0d0f;
 }
+
+.DiagramContainer svg {
+    max-height: 550px;
+}

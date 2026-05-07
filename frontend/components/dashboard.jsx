@@ -1,5 +1,6 @@
 "use-client"
 
+import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Database, Server, Globe, Cpu, Cloud, Code2, Copy, Check } from "lucide-react"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
@@ -155,11 +156,13 @@ function DashboardContent() {
             <SidebarInset>
                 <header className="sticky top-0 z-10 flex h-14 items-center justify-center border-b border-border/40 bg-background/80 px-4 backdrop-blur-md">
 
-                    <div className="flex items-center justify-center w-full max-w-5xl">
-                        <div className="flex flex-1 items-center gap-2">
-                            <BrainCircuit className="size-5 text-primary" />
-                            <span className="font-larger">ArchGen</span>
-                        </div>
+                    <div className="flex items-center justify-between w-full max-w-5xl">
+                        <Link href="/">
+                            <div className="flex items-center p-1 rounded-[4px] gap-2 cursor-pointer hover:bg-secondary">
+                                <BrainCircuit className="size-5 text-primary" />
+                                <span className="font-larger w-fit">ArchGen</span>
+                            </div>
+                        </Link>
 
                         <div className="flex items-center gap-2">
                             <Show when="signed-out" >
