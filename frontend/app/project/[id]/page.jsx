@@ -82,10 +82,13 @@ export default function ProjectPage({ params }) {
 
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
+
             const a = document.createElement("a");
             a.href = url;
             a.download = `chat-${Date.now()}.pdf`;
+
             a.click();
+
             URL.revokeObjectURL(url);
             toast.success("PDF Downloaded!", {id: toastId, position: "bottom-right"});
         } catch (err) {
@@ -336,7 +339,7 @@ export default function ProjectPage({ params }) {
 
                                     <Dialog>
                                         <DialogTrigger asChild>
-                                            <Button variant="outline" size="sm" className="gap-2 cursor-pointer h-7 w-7 md:w-auto">
+                                            <Button variant="outline" size="sm" className="gap-2 cursor-pointer h-7 w-7 md:w-auto" disabled={loading}>
                                                 <Download className="size-3" />
                                                 <p className="hidden md:flex text-xs">Export</p>
                                             </Button>

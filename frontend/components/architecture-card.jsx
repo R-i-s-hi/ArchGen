@@ -117,7 +117,7 @@ export function ArchitectureCard({ data }) {
       {data.diagram && ( 
         <div className="mb-12">
           <h3 className="text-xl font-semibold ml-1.5 mb-3">System Architecture</h3>
-          <div className="DiagramContainer" ref={containerRef} />
+          <div className="DiagramContainer flex justify-center" ref={containerRef} />
         </div>
       )}
       

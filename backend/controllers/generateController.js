@@ -35,6 +35,18 @@ function extractJSON(text) {
   return null;
 }
 
+function sanitizeMermaid(text) {
+  if (!text || typeof text !== "string") {
+    return "";
+  }
+
+  return text
+    .replace(/```mermaid/g, "")
+    .replace(/```/g, "")
+    .replace(/\r/g, "")
+    .trim();
+}
+
 export const generateProject = async (req, res) => {
   try {
     const { prompt, ownerId, ttl } = req.body;
@@ -104,17 +116,14 @@ export const generateProject = async (req, res) => {
       }
       console.log(DiagramResult);
 
-      const cleanDiagramJSON = extractJSON(DiagramResult);
+      const cleanDiagramJSON = sanitizeMermaid(DiagramResult);
       if (!cleanDiagramJSON) {
         return res.status(500).json({
           error: "Could not extract JSON",
         });
       }
 
-      const repairedDiagram = jsonrepair(cleanDiagramJSON );
-      const parsedDiagram = JSON.parse(repairedDiagram);
-
-      const updatedProject = await Project.findByIdAndUpdate({_id: newProject._id}, {diagram: parsedDiagram.diagram},  { new: true });
+      const updatedProject = await Project.findByIdAndUpdate({_id: newProject._id}, {diagram: parsedDiagramcleanDiagramJSON.diagram},  { new: true });
 
       return res.json({
         success: true,

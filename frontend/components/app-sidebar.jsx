@@ -26,6 +26,7 @@ import {
 import { useSidebar } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@clerk/nextjs"
+import "./app-sidebar.css"
 
 
 export function AppSidebar({ selectedProjectId }) {
@@ -95,13 +96,13 @@ export function AppSidebar({ selectedProjectId }) {
         <div className="flex flex-col gap-2 h-full">
 
           {fetchedProjects.length > 0 && (
-            <SidebarGroup className="h-[50%]">
+            <SidebarGroup className="h-[50%] pr-0">
               <SidebarGroupLabel className="flex items-center gap-2">
                 <Clock className="size-3.5" />
                 Recent
               </SidebarGroupLabel>
 
-              <SidebarGroupContent>
+              <SidebarGroupContent className="chatsContainer">
                 <SidebarMenu>
                   {fetchedProjects.map((project) => (
                     <SidebarMenuItem key={project._id}>
@@ -120,16 +121,15 @@ export function AppSidebar({ selectedProjectId }) {
             </SidebarGroup>
           )}
 
-
           {fetchedProjects.length > 0 && (
-            <SidebarGroup className="h-[50%]">
+            <SidebarGroup className="h-[50%] pr-0">
               <hr />
               <SidebarGroupLabel className="flex items-center gap-2">
                 <FolderKanban className="size-3.5" />
                 All Projects
               </SidebarGroupLabel>
 
-              <SidebarGroupContent>
+              <SidebarGroupContent className="chatsContainer">
                 <SidebarMenu>
                   {fetchedProjects.map((project) => (
                     <SidebarMenuItem key={project._id}>

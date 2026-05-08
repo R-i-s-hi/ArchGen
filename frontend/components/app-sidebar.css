@@ -1,0 +1,27 @@
+.chatsContainer {
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.chatsContainer::-webkit-scrollbar {
+
+    border-radius: 3rem;
+    padding-inline: 1rem;
+    height: 14px;
+    margin-inline: 1rem;
+
+}
+
+.chatsContainer::-webkit-scrollbar-track {
+    border-radius: 3rem;
+    height: 14px;
+    margin-inline: 1.5rem;
+}
+
+.chatsContainer::-webkit-scrollbar-thumb {
+    height: 5px;
+    width: 100px;
+    background-color: gray;
+    border: 5.5px solid #030303;
+    border-radius: 3px;
+}

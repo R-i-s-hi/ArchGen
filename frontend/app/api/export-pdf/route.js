@@ -17,6 +17,8 @@ export async function POST(req) {
 
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
+  await page.waitForSelector(".mermaid svg");
+  await new Promise(resolve => setTimeout(resolve, 500));
 
   const pdf = await page.pdf({
     format: "A4",
@@ -35,7 +37,32 @@ export async function POST(req) {
 }
 
 function buildArchitectureHTML(a) {
-  // --- Tech Stack ---
+
+  // Diagram
+  const diagram = `
+    <div class="section">
+      <h2>Architecture Diagram</h2>
+
+      <div class="diagram-container">
+        <div class="mermaid">
+          ${a.diagram}
+        </div>
+      </div>
+    </div>
+  `;
+
+   // Explanation
+  const explanation = `
+    <div class="section">
+      <h2>Project Architecture</h2>
+      ${a.explanation.map((e) => `
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-title">${e.title}</div>
+          <p style="color:#555;line-height:1.6">${e.reason}</p>
+        </div>`).join("")}
+    </div>`;
+
+  // Tech Stack
   const techStack = `
     <div class="section">
       <h2>Tech Stack</h2>
@@ -60,7 +87,7 @@ function buildArchitectureHTML(a) {
       </div>
     </div>`;
 
-  // --- Folder Structure ---
+  // Folder Structure
   const folderStructure = `
     <div class="section">
       <h2>Folder Structure</h2>
@@ -80,7 +107,7 @@ function buildArchitectureHTML(a) {
       </div>
     </div>`;
 
-  // --- API Routes ---
+  // API Routes
   const methodColors = { GET: "#22c55e", POST: "#3b82f6", PUT: "#f59e0b", DELETE: "#ef4444", PATCH: "#a855f7" };
   const apiRoutes = `
     <div class="section">
@@ -98,7 +125,7 @@ function buildArchitectureHTML(a) {
       </table>
     </div>`;
 
-  // --- Database Schema ---
+  // Database Schema
   const schemaCards = Object.entries(a.database_schema).map(([collection, fields]) => `
     <div class="card">
       <div class="card-title">${collection}</div>
@@ -113,7 +140,7 @@ function buildArchitectureHTML(a) {
       <div class="grid-2">${schemaCards}</div>
     </div>`;
 
-  // --- Feature Roadmap ---
+  // Feature Roadmap
   const statusColors = { "In Progress": "#f59e0b", Planned: "#3b82f6", Backlog: "#9ca3af", Done: "#22c55e" };
   const roadmap = `
     <div class="section">
@@ -128,16 +155,6 @@ function buildArchitectureHTML(a) {
         </div>`).join("")}
     </div>`;
 
-  // --- Explanation ---
-  const explanation = `
-    <div class="section">
-      <h2>Project Architecture</h2>
-      ${a.explanation.map((e) => `
-        <div class="card" style="margin-bottom:12px">
-          <div class="card-title">${e.title}</div>
-          <p style="color:#555;line-height:1.6">${e.reason}</p>
-        </div>`).join("")}
-    </div>`;
 
   return `
     <html>
@@ -183,6 +200,21 @@ function buildArchitectureHTML(a) {
         td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
         tr:hover td { background: #fafafa; }
 
+        /* Mermaid diagram */
+        .diagram-container {
+          background: #fff;
+          border: 1px solid #e5e7eb;
+          border-radius: 12px;
+          padding: 20px;
+          overflow: hidden;
+        }
+
+        .mermaid {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
         /* Misc */
         .badge { display: inline-block; padding: 2px 8px; border-radius: 999px;
                  font-size: 10px; font-weight: 600; color: #fff; }
@@ -192,6 +224,15 @@ function buildArchitectureHTML(a) {
         .roadmap-header strong { font-size: 13px; }
         p { font-size: 12px; color: #555; line-height: 1.6; }
       </style>
+      <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        mermaid.initialize({
+          startOnLoad: true,
+          securityLevel: "strict",
+          theme: "neutral"
+        });
+      </script>
     </head>
     <body>
       <div class="header">
@@ -199,12 +240,13 @@ function buildArchitectureHTML(a) {
         <div class="prompt">"${a.prompt}"</div>
         <div class="meta">Generated: ${new Date(a.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · ID: ${a._id}</div>
       </div>
+      ${diagram}
+      ${explanation}
       ${techStack}
       ${folderStructure}
       ${apiRoutes}
       ${dbSchema}
       ${roadmap}
-      ${explanation}
     </body>
     </html>`;
 }
