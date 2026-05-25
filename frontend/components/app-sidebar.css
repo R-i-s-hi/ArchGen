@@ -1,27 +1,114 @@
 .chatsContainer {
-    overflow-y: auto;
-    padding-right: 5px;
+  overflow-y: auto;
 }
 
 .chatsContainer::-webkit-scrollbar {
-
-    border-radius: 3rem;
-    padding-inline: 1rem;
-    height: 14px;
-    margin-inline: 1rem;
-
+  border-radius: 3rem;
+  padding-inline: 1rem;
+  height: 14px;
+  margin-inline: 1rem;
 }
 
 .chatsContainer::-webkit-scrollbar-track {
-    border-radius: 3rem;
-    height: 14px;
-    margin-inline: 1.5rem;
+  border-radius: 3rem;
+  height: 14px;
+  margin-inline: 1.5rem;
 }
 
 .chatsContainer::-webkit-scrollbar-thumb {
-    height: 5px;
-    width: 100px;
-    background-color: gray;
-    border: 5.5px solid #030303;
-    border-radius: 3px;
+  height: 5px;
+  width: 100px;
+  background-color: #141618;
+  border: 5.5px solid #030303;
+  border-radius: 3px;
+}
+
+.chatsContainer::-webkit-scrollbar-thumb:hover {
+  background-color: gray;
+}
+
+[data-slot="sidebar"][data-state="open"] {
+  width: 240px !important;
+}
+
+.dropdown-btn {
+  display: none;
+  height: 28px;
+  width: fit-content;
+
+  padding: 0;
+  margin-inline: 0;
+
+  background: transparent;
+  color: white;
+
+  cursor: pointer;
+}
+
+.optn-dropdown {
+  display: none;
+}
+.chat {
+  position: relative;
+}
+
+.chat:hover .optn-dropdown {
+  display: inline-block;
+}
+
+[data-slot="sidebar"] {
+  overflow: visible !important;
+}
+
+.chatsContainer {
+  overflow-y: auto;
+  overflow-x: visible !important;
+}
+
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+button {
+  outline: none;
+  border: none;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 13px;
+  padding-inline: 0.5rem;
+  padding-block: 0.375rem;
+  color: var(--muted-foreground);
+  background-color: transparent;
+}
+
+.dropdown-item:hover {
+  background-color: oklch(0.22 0.005 250);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dropdown-delete-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 13px;
+  padding-inline: 0.5rem;
+  padding-block: 0.375rem;
+  color: oklch(60.896% 0.23409 26.103);
+  background-color: transparent;
+}
+
+.dropdown-delete-item:hover {
+  background-color: oklch(0.577 0.245 27.325 / 0.9);
+  color: white;
 }

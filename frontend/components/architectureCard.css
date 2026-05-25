@@ -38,30 +38,72 @@
     height: 77.39px;
 }
 
+.DiagramContainer svg {
+    max-height: 550px;
+}
+
 .scroller::-webkit-scrollbar {
-    background-color: #0c0d0f;
+    /* border-radius: 3rem; */
     border-radius: 3rem;
     padding-inline: 1rem;
     height: 14px;
+    width: 100vw;
     margin-inline: 1rem;
 
 }
 
-.scroller::-webkit-scrollbar-track {
-    background-color: #0c0d0f;
+
+[data-slot="table-container"]::-webkit-scrollbar {
+
+    border-radius: 3rem;
+    padding-inline: 1rem;
+    height: 14px;
+    width: 100vw;
+    margin-inline: 1rem;
+
+}
+
+[data-slot="table-container"]::-webkit-scrollbar-track , .scroller::-webkit-scrollbar-track {
     border-radius: 3rem;
     height: 14px;
+    width: 100%;
     margin-inline: 1.5rem;
 }
 
-.scroller::-webkit-scrollbar-thumb {
-    height: 6px;
+[data-slot="table-container"]::-webkit-scrollbar-thumb, .scroller::-webkit-scrollbar-thumb {
+    height: 5px;
     width: 100px;
-    background-color: gray;
+    background-color: #24272a;
+    border: 5.5px solid #0c0d0f;
     border-radius: 3px;
-    border: 4px solid #0c0d0f;
 }
 
-.DiagramContainer svg {
-    max-height: 550px;
+[data-slot="table-container"]::-webkit-scrollbar-thumb:hover, .scroller::-webkit-scrollbar-thumb:hover {
+    background-color: gray;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.autoShow {
+  opacity: 0;
+  transform: translateY(200px) scale(0.3);
+  transition: all 0.6s ease-out;
+}
+
+.autoShow.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }

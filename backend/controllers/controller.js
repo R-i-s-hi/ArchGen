@@ -25,6 +25,27 @@ export const getProjectById = async (req, res) => {
     }
 }
 
+export const UpdateProject = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title } = req.body;
+        const project = await Project.findByIdAndUpdate(id, { title }, { new: true });
+        res.json({ success: true, data: project });
+    } catch (err) {
+        res.json({ success: false, error: "Failed to update project" });
+    }
+}
+
+export const DeleteProject = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Project.findByIdAndDelete(id);
+        res.json({ success: true });
+    } catch (err) {
+        res.json({ success: false, error: "Failed to delete project" });
+    }
+}
+
 export const generateShareableLink = async (req, res) => {
 
     try {

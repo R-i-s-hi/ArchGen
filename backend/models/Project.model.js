@@ -68,6 +68,10 @@ const ProjectSchema = new mongoose.Schema(
             type: Date,
             default: null
         },
+        title: {
+            type: String,
+            default: "Untitled Project"
+        }
     },
     { timestamps: true }
 );
