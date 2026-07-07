@@ -71,6 +71,10 @@ const ProjectSchema = new mongoose.Schema(
         title: {
             type: String,
             default: "Untitled Project"
+        },
+        pinned: {
+            type: Boolean,
+            default: false
         }
     },
     { timestamps: true }

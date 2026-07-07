@@ -1,7 +1,8 @@
 "use client"
-
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -18,9 +19,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import "./architectureCard.css"
 import mermaid from 'mermaid';
-import { useEffect, useRef } from 'react';
+import { ChevronsUpDown } from 'lucide-react';
 
 mermaid.initialize({
   startOnLoad: false, theme: 'base', themeVariables: {
@@ -81,6 +87,7 @@ const RenderFields = ({ fields }) => {
 export function ArchitectureCard({ data }) {
 
   const containerRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     if (!data.diagram) return;
@@ -109,10 +116,11 @@ export function ArchitectureCard({ data }) {
               Why this architecture?
             </h3>
 
+            {/* <div className="flex flex-row flex-wrap justify-start gap-3"> */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:grid-cols-3">
               {data.explanation.map((e, i) => (
                 <Card className="transition-all duration-250 ease-in-out hover:-translate-y-0.5 hover:scale-102 hover:shadow-green-500 hover:border-accent cursor-pointer animate-slideUp" style={{ animationDelay: `${i * 0.15}s` }} key={i}>
-                  <CardContent>
+                  <CardContent className="sm:px-6 px-5">
                     <div className="mb-2" key={i}>
                       <strong className="text-[15px]"> • {e.title}</strong>
                       <p className="ml-2.5 text-[#f5f5f5d6] text-[14px]">{e.reason}</p>
@@ -121,6 +129,7 @@ export function ArchitectureCard({ data }) {
                 </Card>
               ))}
             </div>
+
           </>
         )}
       </div>
@@ -142,7 +151,7 @@ export function ArchitectureCard({ data }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <Card className="transition-all duration-250 ease-in-out hover:-translate-y-0.5 hover:scale-102 hover:shadow-gray-400 hover:border-accent cursor-pointer overflow-x-auto scroller">
-              <CardContent className="space-y-4 max-w-[220px]">
+              <CardContent className="space-y-4 px-5 sm:px-6 max-w-[220px]">
                 <h3 className="font-semibold mb-2 text-[16px]">Frontend</h3>
                 <div className="flex gap-2 flex-wrap">
                   {Object.values(data?.tech_stack?.frontend || {}).map((value, i) => (
@@ -153,7 +162,7 @@ export function ArchitectureCard({ data }) {
             </Card>
 
             <Card className="transition-all duration-250 ease-in-out hover:-translate-y-0.5 hover:scale-102 hover:shadow-gray-400 hover:border-accent cursor-pointer overflow-x-auto scroller">
-              <CardContent className="space-y-4  max-w-[220px]">
+              <CardContent className="space-y-4 px-5 sm:px-6 max-w-[220px]">
                 <h3 className="font-semibold mb-2 text-[16px]">Backend</h3>
                 <div className="flex gap-2 flex-wrap">
                   {Object.values(data?.tech_stack?.backend || {}).map((item, i) => (
@@ -164,7 +173,7 @@ export function ArchitectureCard({ data }) {
             </Card>
 
             <Card className="transition-all duration-250 ease-in-out hover:-translate-y-0.5 hover:scale-102 hover:shadow-gray-400 hover:border-accent cursor-pointer overflow-x-auto scroller">
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 px-5 sm:px-6">
                 <h3 className="font-semibold mb-2 text-[16px]">Database</h3>
                 <Badge className="text-[11px]">
                   {data?.tech_stack?.database?.type}
@@ -184,7 +193,7 @@ export function ArchitectureCard({ data }) {
             API Routes
           </h3>
           <Card className="pb-0">
-            <CardContent className="scroller">
+            <CardContent className="scroller sm:px-6 px-[14px]">
               <Table className="overflow-x-auto scroller">
                 <TableCaption className="text-[11px] text-left pl-2 pb-[5px]">*These are main API routes which will create the app. You can create your custom Routes</TableCaption>
                 <TableHeader>
@@ -215,7 +224,7 @@ export function ArchitectureCard({ data }) {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Card className="pb-0">
-              <CardContent className="overflow-x-auto scroller h-full">
+              <CardContent className="overflow-x-auto scroller h-full sm:px-6 px-5">
                 {data.folder_structure.frontend && (<p className="font-bold text-[18px]">Frontend: </p>)}
                 <ul className="font-mono text-[13px] space-y-1 pl-px">
                   {data?.folder_structure?.frontend?.map?.((f, i) => (
@@ -226,7 +235,7 @@ export function ArchitectureCard({ data }) {
               </CardContent>
             </Card>
             <Card className="pb-0">
-              <CardContent className="overflow-x-auto scroller h-full">
+              <CardContent className="overflow-x-auto scroller h-full sm:px-6 px-5">
                 {data.folder_structure.frontend && (<p className="font-bold text-[18px]">Backend: </p>)}
                 <ul className="font-mono text-[13px] space-y-1 pl-px pb-[5px]">
                   {data?.folder_structure?.backend?.map?.((f, i) => (
@@ -251,7 +260,7 @@ export function ArchitectureCard({ data }) {
                   <CarouselItem key={model} className="basis-1/1 sm:basis-1/2 md:basis-1/3 pl-1">
                     <div className="p-1 h-full">
                       <Card className="pb-0 h-full">
-                        <CardContent className="overflow-x-auto scroller">
+                        <CardContent className="overflow-x-auto scroller sm:px-6 px-5">
                           <div key={model} className="mb-4">
                             <h3 className="font-semibold">{model}</h3>
                             <RenderFields fields={fields} />
@@ -270,30 +279,44 @@ export function ArchitectureCard({ data }) {
             </div>
           </Carousel>
         </div>
-
         <div>
-
           <h3 className="text-xl font-semibold mt-6 md:mt-0 ml-1.5 mb-3">
             Feature Roadmap
           </h3>
-          <Card className="pb-0">
-            <CardContent className="overflow-x-auto scroller pr-4">
-              <ul className="timeline">
-                {(data?.feature_roadmap || []).map((f, i) => (
-                  <li key={i}>
-                    <div className="node" />
-                    <div className="content">
-                      <Badge className="px-3 py-0.75 font-medium mb-1 rounded-tl-none">{f.name}</Badge>
-                      <p className="text-sm text-muted-foreground ml-1 font-medium leading-tight">
-                        {f.description}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+
+          <div className="relative h-auto md:pt-0 pt-4">
+            <div className="absolute left-4 md:left-1/2 top-0 h-full w-0.5 bg-muted-foreground"></div>
+
+            {(data?.feature_roadmap || []).map((f, i) => (
+              <div key={i} className="mb-12 flex md:items-center relative">
+
+
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-3 h-3 rounded-full border border-muted-foreground bg-background"></div>
+
+                {i % 2 === 0 ? (
+                  <div className="w-full pl-10 md:pl-0 md:w-1/2 md:pr-8 text-left min-h-fit md:text-right md:min-h-[130px] md:pt-[50px] md:mt-0 mt-[-8px]">
+                    <Badge className="px-3 py-0.75 font-medium mb-1 listBadge">
+                      {f.name}
+                    </Badge>
+                    <p className="h-fit w-fit md:w-full md:h-full p-2 rounded-md text-sm text-muted-foreground font-medium bg-secondary leading-tight">
+                      {f.description}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="w-full pl-10 md:pl-8 md:w-1/2 text-left md:absolute md:right-0 md:min-h-[130px] md:pt-[50px] md:mt-0 mt-[-8px]">
+                    <Badge className="px-3 py-0.75 font-medium mb-1 listBadge">
+                      {f.name}
+                    </Badge>
+                    <p className="h-fit w-fit p-2 md:w-full md:h-full rounded-md text-sm text-muted-foreground font-medium bg-secondary leading-tight">
+                      {f.description}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
+
 
       </div >
     </>

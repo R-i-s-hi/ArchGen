@@ -3,11 +3,11 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Database, Server, Globe, Cpu, Cloud, Code2, Copy, Check } from "lucide-react"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ProjectInput } from "@/components/project-input"
 import { Badge } from "@/components/ui/badge"
-import { BrainCircuit, Download, Share2 } from "lucide-react"
+import { BrainCircuit, Download, Share2, PanelRightClose } from "lucide-react"
 import { Show, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/nextjs'
 import { dark } from "@clerk/ui/themes"
 import { Button } from "@/components/ui/button"
@@ -19,13 +19,14 @@ import { toast } from "sonner"
 function DashboardContent() {
 
     const { userId, isSignedIn } = useAuth()
+    const { toggleSidebar } = useSidebar()
 
     const [projectIdea, setProjectIdea] = useState("")
     const [isGenerating, setIsGenerating] = useState(false)
     const [ansGenerated, setAnsGenerated] = useState(false)
     const [architecture, setArchitecture] = useState(null)
     const [loading, setLoading] = useState(false)
-    
+
     useEffect(() => {
         if (!isSignedIn || !userId) return
 
@@ -140,7 +141,7 @@ function DashboardContent() {
         }
     }
 
-    const handleCopyUserId = async() => {
+    const handleCopyUserId = async () => {
         navigator.clipboard.writeText(userId)
             .then(() => {
                 toast.success("ID copied to clipboard!", { position: "top-center" });
@@ -170,17 +171,17 @@ function DashboardContent() {
                                     <p className="text-[12px] text-muted-foreground cursor-pointer hover:text-white mr-3">Sign in</p>
                                 </SignInButton>
                                 <SignUpButton>
-                                    <Button className="py-0.5 px-3 text-[11px] font-medium cursor-pointer h-6.5 w-fit">
-                                        Signup
+                                    <Button className="py-0.5 px-4 text-[11px] rounded-[14px] font-medium cursor-pointer h-6.5 w-fit">
+                                        Get Started
                                     </Button>
                                 </SignUpButton>
                             </Show>
                             <Show when="signed-in">
                                 <UserButton appearance={{ theme: dark }}>
                                     <UserButton.MenuItems>
-                                        <UserButton.Action 
+                                        <UserButton.Action
                                             label="Copy UserId"
-                                            labelIcon={<Copy className="size-3 ml-0.5"/>}
+                                            labelIcon={<Copy className="size-3 ml-0.5" />}
                                             onClick={() => handleCopyUserId()}
                                         />
                                         <UserButton.Action label="manageAccount" />
@@ -193,10 +194,12 @@ function DashboardContent() {
 
                 </header>
 
-                <main className="flex-1 overflow-auto pt-4 p-8">
+                <main className="flex-1 overflow-auto pt-4 p-4 sm:p-8">
                     <div className="mx-auto max-w-5xl space-y-8 ">
                         <div className="max-w-fit max-h-fit">
-                            <SidebarTrigger className="cursor-pointer bg-primary text-black" />
+                            <Button variant="ghost" size="icon" className="bg-transparent p-0 w-fit text-white/80 hover:bg-transparent hover:text-white cursor-pointer" onClick={toggleSidebar}>
+                                <PanelRightClose />
+                            </Button>
                         </div>
                         <div style={{ display: ansGenerated ? "none" : "flex", flexDirection: "column", gap: "2rem" }}>
                             <div className="space-y-2">
@@ -236,11 +239,11 @@ function DashboardContent() {
                                 <ArchitectureCard data={architecture} />
                             </div>
                         )}
-                        
+
                         {!architecture && (
-                            <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(369px,1fr))] [@media(max-width:600px)]:grid-cols-1">
                                 {/* Card 1 - Architecture Diagram */}
-                                <div className="group relative overflow-hidden border border-blue-500/20 bg-blue-500/10 transition-all hover:border-blue-600/40 hover:shadow-lg hover:shadow-blue-500/5 rounded-lg">
+                                <div className="group relative overflow-hidden border border-blue-500/20 bg-blue-500/10 transition-all hover:border-blue-600/40 hover:shadow-lg hover:shadow-blue-500/5 rounded-xl">
                                     <div className="flex flex-row items-start justify-between gap-4 pb-3 p-6">
                                         <div className="flex items-start gap-3">
                                             <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -263,7 +266,7 @@ function DashboardContent() {
                                             <ul className="space-y-1.5">
                                                 {["Layer-by-layer breakdown of your stack", "Data flow between services", "Clear separation of concerns"].map((detail, i) => (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-primary" />
+                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-blue-400 " />
                                                         {detail}
                                                     </li>
                                                 ))}
@@ -273,7 +276,7 @@ function DashboardContent() {
                                 </div>
 
                                 {/* Card 2 - Tech Stack */}
-                                <div className="group relative overflow-hidden border border-green-500/20 bg-green-500/10 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 rounded-lg">
+                                <div className="group relative overflow-hidden border border-green-500/20 bg-green-500/10 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 rounded-xl">
                                     <div className="flex flex-row items-start justify-between gap-4 pb-3 p-6">
                                         <div className="flex items-start gap-3">
                                             <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-green-500/10 border border-green-500/20">
@@ -296,7 +299,7 @@ function DashboardContent() {
                                             <ul className="space-y-1.5">
                                                 {["Best-fit tools for your use case", "Reasoning behind each choice", "Alternatives with trade-offs explained"].map((detail, i) => (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-primary" />
+                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-green-400" />
                                                         {detail}
                                                     </li>
                                                 ))}
@@ -306,7 +309,7 @@ function DashboardContent() {
                                 </div>
 
                                 {/* Card 3 - Database Schema */}
-                                <div className="group relative overflow-hidden border border-orange-500/20 bg-orange-500/10 transition-all hover:border-orange-600/40 hover:shadow-lg hover:shadow-orange-500/5 rounded-lg">
+                                <div className="group relative overflow-hidden border border-orange-500/20 bg-orange-500/10 transition-all hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 rounded-xl">
                                     <div className="flex flex-row items-start justify-between gap-4 pb-3 p-6">
                                         <div className="flex items-start gap-3">
                                             <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -329,7 +332,7 @@ function DashboardContent() {
                                             <ul className="space-y-1.5">
                                                 {["Entity relationships mapped out", "Normalized schema with no redundancy", "Ready-to-run migration files"].map((detail, i) => (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-primary" />
+                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-orange-400" />
                                                         {detail}
                                                     </li>
                                                 ))}
@@ -339,7 +342,7 @@ function DashboardContent() {
                                 </div>
 
                                 {/* Card 4 - Share & Export */}
-                                <div className="group relative overflow-hidden border border-purple-500/20 bg-purple-500/10 transition-all hover:border-purple-600/40 hover:shadow-lg hover:shadow-purple-500/5 rounded-lg">
+                                <div className="group relative overflow-hidden border border-purple-500/20 bg-purple-500/10 transition-all hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-500/5 rounded-xl">
                                     <div className="flex flex-row items-start justify-between gap-4 pb-3 p-6">
                                         <div className="flex items-start gap-3">
                                             <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -362,7 +365,7 @@ function DashboardContent() {
                                             <ul className="space-y-1.5">
                                                 {["Shareable chat link for teammates or clients", "Export full project as PDF, Markdown, or JSON", "Preserve full conversation history"].map((detail, i) => (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-primary" />
+                                                        <span className="mt-2 size-1 shrink-0 rounded-full bg-purple-400" />
                                                         {detail}
                                                     </li>
                                                 ))}

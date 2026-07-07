@@ -3,11 +3,11 @@
 import Link from "next/link"
 import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ArchitectureCard } from "@/components/architecture-card"
 import { Button } from "@/components/ui/button"
-import { Layers, BrainCircuit, Download, Share2, ArrowLeft, Calendar, CheckCircle2, Clock, FileEdit } from "lucide-react"
+import { Layers, BrainCircuit, Download, Share2, ArrowLeft, Calendar, CheckCircle2, Clock, FileEdit, X } from "lucide-react"
 import {
     Dialog,
     DialogContent,
@@ -48,9 +48,9 @@ export default function ProjectPage({ params }) {
     const [loading, setLoading] = useState(false)
     const [showPrompt, setShowPrompt] = useState(false)
     const [shareLink, setShareLink] = useState("")
-    const [visibility, setVisibility] = useState("anyone");
-    const [restrictUserId, setRestrictUserId] = useState("");
-    const [ids, setIds] = useState([]);
+    const [visibility, setVisibility] = useState("anyone")
+    const [restrictUserId, setRestrictUserId] = useState("")
+    const [ids, setIds] = useState([])
 
     const fetchProject = async () => {
         try {
@@ -225,7 +225,12 @@ export default function ProjectPage({ params }) {
 
                                         <DialogContent>
                                             <DialogHeader>
-                                                <DialogTitle>Share your chat link</DialogTitle>
+                                                <DialogTitle className="relative">
+                                                    <span>Share your chat link</span>
+                                                    <DialogClose className="absolute right-2 top-0 rounded-sm cursor-pointer opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                                                        <X className="size-3.5" />
+                                                    </DialogClose>
+                                                </DialogTitle>
 
                                                 <DialogDescription className="mt-3 pl-3 max-w-2xs">
                                                     Choose how you want to share your chat. You can use the chat link for 3 days.
@@ -353,7 +358,7 @@ export default function ProjectPage({ params }) {
                                             </DialogHeader>
                                             <DialogFooter>
                                                 <DialogClose asChild>
-                                                    <Button className="h-8 cursor-pointer">
+                                                    <Button variant="secondary" className="h-8 cursor-pointer">
                                                         <span>Cancel</span>
                                                     </Button>
                                                 </DialogClose>
@@ -393,10 +398,10 @@ export default function ProjectPage({ params }) {
                 </header>
 
 
-                <main className="flex-1 overflow-auto pt-4 p-8">
+                <main className="flex-1 overflow-auto pt-4 sm:p-8 p-4">
                     <div className="mx-auto max-w-5xl space-y-8">
                         <div className="max-w-fit max-h-fit">
-                            <SidebarTrigger className="cursor-pointer bg-primary text-black" />
+                            <SidebarTrigger labelIcon={<Layers />} className="cursor-pointer bg-primary text-black" />
                         </div>
                         <div>
                             <div className="flex justify-between items-top">

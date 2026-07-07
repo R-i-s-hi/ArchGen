@@ -13,25 +13,22 @@ export function ProjectInput({
   isGenerating,
 }) {
   return (
-    <Card className="border-border/60 bg-card/50 backdrop-blur">
-      <CardContent className="p-4">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">
-              Describe your project idea
-            </label>
+    <Card className="border-border/60 rounded-[20px] bg-card/50 backdrop-blur sm:py-6 py-4">
+      <CardContent className="sm:px-4 px-2 py-0">
+        <div className="space-y-0">
+          <div className="space-y-0">
             <Textarea
               id="project-input"
-              placeholder="e.g., A real-time collaborative whiteboard app with AI-powered shape recognition, supporting multiple users and export to various formats..."
+              placeholder="Write a detailed description of your project"
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              className="focus:outline-none focus:ring-0 focus-visible:ring-0 mt-2 min-h-[120px] max-h-[200px] resize-none bg-background/50 text-sm placeholder:text-muted-foreground/60 overflow-y-auto"
+              className="min-h-[90px] max-h-[130px] border-none focus:outline-none focus:ring-0 focus-visible:ring-0 resize-none bg-inherit text-sm placeholder:text-muted-foreground/60 overflow-y-auto"
             />
           </div>
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between pl-3 gap-4">
             <p className="text-xs text-muted-foreground hidden md:flex">
-              Be specific about features, scale, and technical requirements
+              *Be specific about features, scale, and technical requirements
             </p>
             <Button
               onClick={onGenerate}

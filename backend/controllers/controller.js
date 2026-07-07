@@ -29,12 +29,31 @@ export const UpdateProject = async (req, res) => {
     try {
         const { id } = req.params;
         const { title } = req.body;
-        const project = await Project.findByIdAndUpdate(id, { title }, { new: true });
-        res.json({ success: true, data: project });
+        const deleted = await Project.findByIdAndDelete(id);
+        
+        if (!deleted) return res.status(404).json({ success: false, error: "Project not found" });
+        res.json({ success: true });
+
     } catch (err) {
         res.json({ success: false, error: "Failed to update project" });
     }
 }
+
+export const pintoggleProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const project = await Project.findById(id);
+
+    if (!project) return res.status(404).json({ success: false, error: "Project not found" });
+
+    project.pinned = !project.pinned;
+    await project.save();
+    res.json({ success: true, pinned: project.pinned });
+  } catch (err) {
+    res.status(500).json({ success: false, error: "Failed to toggle project pin status" });
+  }
+};
+
 
 export const DeleteProject = async (req, res) => {
     try {
