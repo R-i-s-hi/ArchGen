@@ -52,9 +52,11 @@ export default function ProjectPage({ params }) {
     const [restrictUserId, setRestrictUserId] = useState("")
     const [ids, setIds] = useState([])
 
+    const base_uri = process.env.NEXT_PUBLIC_BACKEND_URI;
+
     const fetchProject = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/project/${id}`);
+            const res = await fetch(`${base_uri}/project/${id}`);
             const result = await res.json();
             setProject(result.data);
             console.log(project);
@@ -102,7 +104,7 @@ export default function ProjectPage({ params }) {
     const handleShare = async (chatId) => {
         console.log(chatId);
         try {
-            const res = await fetch(`http://localhost:5000/chat/share/${chatId}`, {
+            const res = await fetch(`${base_uri}/chat/share/${chatId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

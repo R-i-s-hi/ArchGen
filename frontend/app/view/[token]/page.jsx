@@ -35,9 +35,11 @@ export default function ProjectPage({ params }) {
     const [showPrompt, setShowPrompt] = useState(false)
     const [shareLink, setShareLink] = useState("")
 
+    const base_uri = process.env.NEXT_PUBLIC_BACKEND_URI;
+
     const fetchProject = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/share/project/${token}`);
+            const res = await fetch(`$${base_uri}/share/project/${token}`);
             const result = await res.json();
             setProject(result.data);
         } catch (err) {
@@ -79,7 +81,7 @@ export default function ProjectPage({ params }) {
     const handleShare = async (chatId) => {
         console.log(chatId);
         try {
-            const res = await fetch(`http://localhost:5000/chat/share/${chatId}`, {
+            const res = await fetch(`${base_uri}/chat/share/${chatId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

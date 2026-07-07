@@ -75,7 +75,9 @@ export function AppSidebar({ selectedProjectId }) {
   const [guestId, setGuestId] = useState(null);
   const [projectTitle, setProjectTitle] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
-  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const base_uri = process.env.NEXT_PUBLIC_BACKEND_URI;
 
   useEffect(() => {
     const id = localStorage.getItem("guestId")
@@ -88,7 +90,7 @@ export function AppSidebar({ selectedProjectId }) {
     if (!ownerId) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/projects?ownerId=${ownerId}`);
+      const res = await fetch(`${base_uri}/projects?ownerId=${ownerId}`);
 
       const result = await res.json();
       setFetchedProjects(result.data);
@@ -106,7 +108,7 @@ export function AppSidebar({ selectedProjectId }) {
     if (e.key === "Enter") {
       try {
         const newTitle = title.trim();
-        const res = await fetch(`http://localhost:5000/project/${projectId}`, {
+        const res = await fetch(`${base_uri}/project/${projectId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ title: newTitle }),
@@ -133,7 +135,7 @@ export function AppSidebar({ selectedProjectId }) {
 
   const handleDeleteProject = async (projectId) => {
     try {
-      const res = await fetch(`http://localhost:5000/project/${projectId}`, {
+      const res = await fetch(`${base_uri}/project/${projectId}`, {
         method: "DELETE",
       });
 
@@ -155,7 +157,7 @@ export function AppSidebar({ selectedProjectId }) {
 
   const handlePinProject = async (projectId) => {
     try {
-      const res = await fetch(`http://localhost:5000/project/pintoggle/${projectId}`, {
+      const res = await fetch(`${base_uri}/project/pintoggle/${projectId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" }
       });

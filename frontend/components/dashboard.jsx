@@ -27,6 +27,8 @@ function DashboardContent() {
     const [architecture, setArchitecture] = useState(null)
     const [loading, setLoading] = useState(false)
 
+    const base_uri = process.env.NEXT_PUBLIC_BACKEND_URI;
+
     useEffect(() => {
         if (!isSignedIn || !userId) return
 
@@ -35,7 +37,7 @@ function DashboardContent() {
 
         const migrate = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/migrate-guest", {
+                const res = await fetch(`${base_uri}/api/migrate-guest`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -80,7 +82,7 @@ function DashboardContent() {
         setProjectIdea("");
 
         try {
-            const res = await fetch("http://localhost:5000/api/generate", {
+            const res = await fetch(`${base_uri}/api/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -110,34 +112,6 @@ function DashboardContent() {
             console.error("Error generating architecture:", err)
         } finally {
             setIsGenerating(false)
-        }
-    }
-
-    const handleExport = async () => {
-        if (!architecture?.length) return;
-        setLoading(true);
-
-        try {
-            const res = await fetch("/api/export-pdf", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ architecture }),
-            });
-
-            if (!res.ok) throw new Error("Export failed");
-
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `chat-${Date.now()}.pdf`;
-            a.click();
-            URL.revokeObjectURL(url);
-        } catch (err) {
-            console.error(err);
-            alert("Failed to export PDF. Please try again.");
-        } finally {
-            setLoading(false);
         }
     }
 
