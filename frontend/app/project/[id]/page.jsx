@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/collapsible"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
-import { Copy, HatGlasses, ChevronRightIcon, UserLock, Users } from "lucide-react"
+import { Copy, HatGlasses, ChevronRightIcon, UserLock, Users, Code } from "lucide-react"
 import { Show, SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs"
 import { dark } from "@clerk/ui/themes"
 import { toast } from "sonner"
@@ -59,7 +59,6 @@ export default function ProjectPage({ params }) {
             const res = await fetch(`${base_uri}/project/${id}`);
             const result = await res.json();
             setProject(result.data);
-            console.log(project);
         } catch (err) {
             console.log(err);
         }
@@ -71,7 +70,7 @@ export default function ProjectPage({ params }) {
     const handleExport = async () => {
         if (!project) return;
         setLoading(true);
-        const toastId = toast.loading("Downloading PDF!", {position: "bottom-right"});
+        const toastId = toast.loading("Downloading PDF!", { position: "bottom-right" });
 
         try {
             const res = await fetch("/api/export-pdf", {
@@ -92,10 +91,10 @@ export default function ProjectPage({ params }) {
             a.click();
 
             URL.revokeObjectURL(url);
-            toast.success("PDF Downloaded!", {id: toastId, position: "bottom-right"});
+            toast.success("PDF Downloaded!", { id: toastId, position: "bottom-right" });
         } catch (err) {
             console.error(err);
-            toast.error("Failed to export PDF. Please try again.", {id: toastId, position: "bottom-right",});
+            toast.error("Failed to export PDF. Please try again.", { id: toastId, position: "bottom-right", });
         } finally {
             setLoading(false);
         }
@@ -164,6 +163,65 @@ export default function ProjectPage({ params }) {
         });
 
         return `${formatted} at ${time}`;
+    }
+
+    function projectToMarkdown(project) {
+    return `
+    #Project Context
+
+    ## 1. Objective
+    ${project.prompt}
+
+    ## 2. Tech Stack
+    ### Frontend
+    - Framework: ${project.tech_stack.frontend.framework}
+    - State Management: ${project.tech_stack.frontend.state_management}
+    - Styling: ${project.tech_stack.frontend.styling}
+
+    ### Backend
+    - Framework: ${project.tech_stack.backend.framework}
+    - Runtime: ${project.tech_stack.backend.runtime}
+    - Auth: ${project.tech_stack.backend.auth}
+
+    ### Database
+    - Type: ${project.tech_stack.database.type}
+
+    ## 3. Folder Structure
+    ### Frontend
+    ${project.folder_structure.frontend.map(f => `- ${f}`).join("\n")}
+
+    ### Backend
+    ${project.folder_structure.backend.map(f => `- ${f}`).join("\n")}
+
+    ## 4. Database Schemas
+    \`\`\`json
+    ${JSON.stringify(project.database_schema, null, 2)}
+    \`\`\`
+
+    ## 5. API Routes
+    ${project.api_routes.map(r => `- **${r.method}** ${r.path} → ${r.description}`).join("\n")}
+
+    ## 6. Features
+    ${project.feature_roadmap.map(f => `- ${f.name}: ${f.description} (${f.status})`).join("\n")}
+
+    ## 7. Coding Rules
+    ${project.explanation.map(e => `- **${e.title}** → ${e.reason}`).join("\n")}
+    `;
+    }
+
+    const CopyAsMarkdown = (project) => {
+
+        console.log(project)
+        const mdProject = projectToMarkdown(project)
+        console.log("md: ", mdProject)
+
+        navigator.clipboard.writeText(mdProject)
+            .then(() => {
+                toast.success("project copied to clipboard!", { position: "top-center" });
+            })
+            .catch(err => {
+                console.error("Failed to copy: ", err);
+            });
     }
 
     if (!project) {
@@ -308,6 +366,7 @@ export default function ProjectPage({ params }) {
 
 
                                                                     </div>
+                                                                    <small className="text-muted-foreground text-[11px]"> <i>*userId can be copied from profile section</i> </small>
                                                                 </>
                                                             )}
                                                         </CollapsibleContent>
@@ -367,7 +426,7 @@ export default function ProjectPage({ params }) {
 
                                                 <DialogTrigger asChild>
                                                     <Button
-                                                        className="h-8 cursor-pointer" 
+                                                        className="h-8 cursor-pointer"
                                                         onClick={() => {
                                                             handleExport(project._id);
                                                         }}
@@ -399,16 +458,19 @@ export default function ProjectPage({ params }) {
 
                 </header>
 
-
                 <main className="flex-1 overflow-auto pt-4 sm:p-8 p-4">
                     <div className="mx-auto max-w-5xl space-y-8">
-                        <div className="max-w-fit max-h-fit">
+                        <div className="w-full max-h-fit flex justify-between items-center">
                             <SidebarTrigger labelIcon={<Layers />} className="cursor-pointer bg-primary text-black" />
+                            <Button className="cursor-pointer h-7" variant="secondary" onClick={() => CopyAsMarkdown(project)}>
+                                <Code className="size-3" />
+                                <span className="text-[12px]">Copy for AI</span>
+                            </Button>
                         </div>
                         <div>
                             <div className="flex justify-between items-top">
-                                <h1 className="text-3xl font-semibold">Project Details</h1>
-                                <div className="text-end leading-none projectDate">
+                                <h1 className="text-3xl font-semibold">Overview</h1>
+                                <div className="text-end projectDate" style={{ lineHeight: "0" }}>
                                     <p className="text-muted-foreground text-xs font-semibold"><i>{DateShow(project.createdAt)}</i></p>
                                     <Button className="p-0 text-xs h-fit cursor-pointer" variant="link" onClick={() => setShowPrompt(true)}>
                                         <i>View full prompt</i>
