@@ -48,6 +48,54 @@ const ProjectSchema = new mongoose.Schema(
             ],
             default: []
         },
+        project_estimation: {
+            complexity: {
+                type: Number,
+                min: 1,
+                max: 5,
+                default: 3
+            },
+            estimated_time: {
+                type: String,
+                default: ""
+            },
+            estimated_team: {
+                type: [String],
+                default: []
+            },
+            estimated_cost: {
+                type: String,
+                default: ""
+            },
+            cost_basis: {
+                type: String,
+                default: ""
+            },
+            performance: {
+                type: Number,
+                min: 1,
+                max: 5,
+                default: 3
+            },
+            maintainability: {
+                type: Number,
+                min: 1,
+                max: 5,
+                default: 3
+            },
+            security: {
+                type: Number,
+                min: 1,
+                max: 5,
+                default: 3
+            },
+            scalability: {
+                type: Number,
+                min: 1,
+                max: 5,
+                default: 3
+            }
+        },
         explanation: [
             {
                 title: {

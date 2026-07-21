@@ -37,18 +37,31 @@ export const generateArchitecture = async (systemPrompt, prompt, model) => {
 }
 
 export const generateDiagram = async (arch, model) => {
-  const systemPrompt = `Generate a flowchart TD showing the full system: frontend, backend, database, and their connections
-                        
-                        - Do NOT use parentheses inside subgraph labels
-                        - Do NOT use parentheses () inside node labels — use square brackets [] instead
-                        - Node labels must only contain alphanumeric characters, spaces, and hyphens`;
+  const systemPrompt = `You are a Mermaid.js diagram generator.
+
+  Generate a flowchart (graph TD) showing the full system: frontend, backend, database, and their connections.
+
+  STRICT SYNTAX RULES:
+  - Node labels: only alphanumeric characters, spaces, and hyphens. No parentheses, colons, slashes, or quotes inside labels.
+  - Subgraph titles: only alphanumeric characters, spaces, and hyphens. No parentheses inside subgraph titles.
+  - Allowed node shapes (use exactly these, matching brackets required):
+    - Rectangle: NodeId[Label]
+    - Rounded: NodeId(Label)
+    - Cylinder for databases only: NodeId[(Label)] — must open with [( and close with )], never just ]
+    - Rhombus: NodeId{Label}
+  - Every subgraph must follow: subgraph Id [Title] ... end
+  - Every opened bracket must have its exact matching close: [ with ], ( with ), [( with )], { with }
+  - Do not put quotes around labels
+  - Keep labels short: 2-4 words maximum
+  - Use only -- or --> or -.-> for connections, with edge labels in the form: A -- Label --> B
+  - Return raw Mermaid syntax only — no markdown fences, no explanations`;
 
   const prompt = `Here is a software architecture: ${JSON.stringify(arch)}
 
-                  Generate a Mermaid flowchart TD diagram showing the full system — frontend, backend, database, and their connections.
+  Generate a Mermaid flowchart TD diagram showing the full system — frontend, backend, database, and their connections. Use a cylinder shape [(Label)] for database nodes specifically.
 
-                  Return ONLY this JSON, nothing else:
-                  {"diagram": "<raw mermaid code here with \\n for line breaks>"}`;
+  Return ONLY this JSON, nothing else:
+  {"diagram": "<raw mermaid code here with \\n for line breaks>"}`;
 
   try {
     const response = await axios.post(

@@ -26,7 +26,11 @@ import {
 } from "@/components/ui/collapsible"
 import "./architectureCard.css"
 import mermaid from 'mermaid';
-import { ChevronsUpDown } from 'lucide-react';
+import { Star, halfStar } from 'lucide-react';
+import { Clock4 } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
+import { FileText } from 'lucide-react';
+import { UsersRound } from 'lucide-react';
 
 mermaid.initialize({
   startOnLoad: false, theme: 'base', themeVariables: {
@@ -102,6 +106,33 @@ export function ArchitectureCard({ data }) {
       containerRef.current.innerHTML = svg;
     }).catch(err => console.error('Mermaid error:', err));
   }, [data.diagram]);
+
+   function Rating({ value }) {
+    // value can be float like 3.5
+    const fullStars = Math.floor(value);
+    const halfStar = value % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+    const stars = [];
+
+    // full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={`full-${i}`} fill="gold" stroke="gold" />);
+    }
+
+    // half star (optional: use a different icon or style)
+    if (halfStar) {
+      stars.push(<halfStar key="half" fill="gold" stroke="gray" />);
+    }
+
+    // empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<Star key={`empty-${i}`} stroke="gray" />);
+    }
+
+    return <div className="flex gap-1">{stars}</div>;
+  }
+
 
   if (!data || typeof data !== "object") {
     return <p>Invalid data</p>;
@@ -279,6 +310,103 @@ export function ArchitectureCard({ data }) {
             </div>
           </Carousel>
         </div>
+
+        <div>
+          {data.project_estimation && (
+            <>
+
+            <h3 className="text-xl font-semibold mt-6 md:mt-0 ml-1.5 mb-3">
+              Budget & Effort
+            </h3>
+            <div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 gap-y-6 ml-1.5 mb-3">
+                <div className='bg-secondary rounded-xl p-4'>
+                  <span className="flex gap-1.5 items-center text-muted-foreground">
+                    <Clock4 className="size-3.5" />
+                    <h3 className='text-[14px] font-semibold'>
+                      Estimated time
+                    </h3>
+                  </span>
+                  <span className='text-[1.6rem] font-semibold'>
+                      {data.project_estimation.estimated_time}
+                  </span>
+                </div>
+                <div className='bg-secondary rounded-xl p-4'>
+                  <span className="flex gap-1.5 items-center text-muted-foreground">
+                    <DollarSign className="size-3.5" />
+                  <h3 className='text-[14px] font-semibold'>Estimated Cost</h3>
+                  </span>
+                  <span className='text-[1.6rem] font-semibold'>
+                    {data.project_estimation.estimated_cost}
+                  </span>
+                </div>
+              </div>
+
+              <hr className='ml-1.5 my-4' />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 gap-y-6 ml-4 mb-3">
+
+                <div>
+                  <span className='flex gap-1.5 items-center mb-2 text-muted-foreground'>
+                    <UsersRound className='size-3.5' />
+                    <h3 className="text-[14px] font-semibold">Estimated team</h3>
+                  </span>
+                  <span >
+                    <ul className="list-disc pl-4">
+                      {data.project_estimation.estimated_team.map((li, idx) => (
+                        <li className="text-[14px]" key={idx}>{li}</li>
+                      ))}
+                    </ul>
+                  </span>
+                </div>
+                <div>
+                  <span className='flex gap-1.5 items-center mb-2 text-muted-foreground'>
+                    <FileText className='size-3.5' />
+                    <h3 className="text-[14px] font-semibold">Cost Basis</h3>
+                  </span>
+                  <span className="text-[14px]">
+                    {data.project_estimation.cost_basis}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            <h3 className="text-xl font-semibold mt-14 ml-1.5 mb-5">
+              Scorecard
+            </h3>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 gap-y-6 md:grid-cols-3 ml-4'>
+              <div className="">
+                <h3 className='mb-1.5 text-[14px] font-semibold text-muted-foreground'>Complexity</h3>
+                <Rating value={data.project_estimation.complexity} />
+              </div>
+              <div className="">
+                <h3 className='mb-1.5 text-[14px] font-semibold text-muted-foreground'>Performance</h3>
+                <Rating value={data.project_estimation.performance} />
+              </div>
+              <div className="">
+                <h3 className='mb-1.5 text-[14px] font-semibold text-muted-foreground'>Maintainability</h3>
+                <Rating value={data.project_estimation.maintainability} />
+              </div>
+              <div className="">
+                <h3 className='mb-1.5 text-[14px] font-semibold text-muted-foreground'>Security</h3>
+                <Rating value={data.project_estimation.security} />
+              </div>
+              <div className="">
+                <h3 className='mb-1.5 text-[14px] font-semibold text-muted-foreground'>Scalability</h3>
+                <Rating value={data.project_estimation.scalability} />
+              </div>
+
+
+            </div>
+
+            
+
+            </>
+          )}
+        </div>
+
         <div>
           <h3 className="text-xl font-semibold mt-6 md:mt-0 ml-1.5 mb-3">
             Feature Roadmap

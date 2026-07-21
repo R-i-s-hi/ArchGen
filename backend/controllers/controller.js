@@ -54,7 +54,6 @@ export const pintoggleProject = async (req, res) => {
   }
 };
 
-
 export const DeleteProject = async (req, res) => {
     try {
         const { id } = req.params;

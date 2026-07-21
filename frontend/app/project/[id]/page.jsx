@@ -276,10 +276,10 @@ export default function ProjectPage({ params }) {
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                className="gap-2 cursor-pointer h-7 w-7 md:w-auto"
+                                                className="gap-2 cursor-pointer h-7 w-7 sm:w-fit"
                                             >
                                                 <Share2 className="size-3" />
-                                                <span className="hidden md:flex text-xs">Share</span>
+                                                <span className="hidden sm:flex text-xs">Share</span>
                                             </Button>
                                         </DialogTrigger>
 
@@ -405,9 +405,9 @@ export default function ProjectPage({ params }) {
 
                                     <Dialog>
                                         <DialogTrigger asChild>
-                                            <Button variant="outline" size="sm" className="gap-2 cursor-pointer h-7 w-7 md:w-auto" disabled={loading}>
+                                            <Button variant="outline" size="sm" className="gap-2 cursor-pointer h-7 w-7 sm:w-fit" disabled={loading}>
                                                 <Download className="size-3" />
-                                                <p className="hidden md:flex text-xs">Export</p>
+                                                <p className="hidden sm:flex text-xs">Export</p>
                                             </Button>
                                         </DialogTrigger>
                                         <DialogContent>
