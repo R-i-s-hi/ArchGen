@@ -12,6 +12,7 @@ ArchGen is an AI-powered tool that generates complete software project architect
 - 🔌 **API Route Suggestions** — REST route scaffolding based on your project's needs
 - 🚀 **Future Feature Recommendations** — AI-suggested features to plan your roadmap
 - 📄 **PDF Export** — Export any generated architecture as a clean, shareable PDF
+- 📋 **Copy as Markdown** — Copy the project as markdown for other AI tools
 - 🔗 **Share Links** — Share a project via link with two access modes:
   - **Anyone with the link** — public view access
   - **Restricted** — access limited to invited/authorized users
@@ -108,7 +109,6 @@ CLERK_SECRET_KEY=your_clerks_seceret_key
 - [ ] Team collaboration on projects
 - [ ] Version history for generated architectures
 - [ ] Multiple AI model support (choose your preferred LLM)
-- [ ] Export to Markdown
 - [ ] Comments on shared projects
 - [ ] Public template gallery
 
